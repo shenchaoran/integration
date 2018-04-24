@@ -26,6 +26,7 @@ let schema = {
                 serviceType: String, // model/data map/data refactor
             },
             state: String,
+            _id: String,    // id on local Geo_Data DB
 
             isMid: Boolean,
             isInput: Boolean,

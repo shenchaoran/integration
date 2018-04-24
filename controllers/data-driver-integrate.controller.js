@@ -69,6 +69,7 @@ module.exports = function DataDriver(task) {
                         .then(dataDoc => {
                             geodata = dataDoc;
                             stub.state = 'PENDING.DISPATCH';
+                            stub._id = dataDoc._id.toString();
                             return _updateInstance()
                         })
                         .then(rst => {
