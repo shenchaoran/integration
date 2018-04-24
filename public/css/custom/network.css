@@ -1,0 +1,9 @@
+.webix_toolbar{
+    background: #ffffff !important;
+}
+.networkList button{
+    color: #7a7676 !important;
+}
+.error {
+    color: red;
+}

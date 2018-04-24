@@ -1,0 +1,296 @@
+<!-- region toolbar -->
+<div class="btn-toolbar" role="toolbar" id="toolbar">
+    <div id="view-mode-toolbar" class="btn-group toolbar">
+        <button id="hand-tool" type="button" class="btn btn-default view-mode-tool" title="pan mode" data-toggle="button" data-tooltip="tooltip"
+            data-placement="bottom">
+            <i class="fa fa-hand-rock-o"></i>
+        </button>
+        <button id="select-tool" type="button" class="btn btn-default view-mode-tool" title="select mode" data-toggle="button" data-tooltip="tooltip"
+            data-placement="bottom">
+            <i class="fa fa-mouse-pointer"></i>
+        </button>
+        <!--<button id="display-toggle-tool" type="button" class="btn btn-default view-mode-tool" title="toggle whether to display IO" data-toggle="button"><i class="fa fa-eye-slash"></i></button>-->
+        <button id="back-pos-tool" type="button" class="btn btn-default view-mode-tool" title="back to origin" data-tooltip="tooltip"
+            data-placement="bottom">
+            <i class="fa fa-crosshairs"></i>
+        </button>
+        <button id="zoomIn-tool" type="button" class="btn btn-default view-mode-tool" title="zoom in" data-toggle="button" data-tooltip="tooltip"
+            data-placement="bottom">
+            <i class="fa fa-search-plus"></i>
+        </button>
+        <button id="zoomOut-tool" type="button" class="btn btn-default view-mode-tool" title="zoom out" data-toggle="button" data-tooltip="tooltip"
+            data-placement="bottom">
+            <i class="fa fa-search-minus"></i>
+        </button>
+    </div>
+    <div id="edit-mode-toolbar" class="btn-group toolbar">
+        <button id="edit-tool" type="button" class="btn btn-default edit-mode-tool" title="edit mode" data-toggle="button" data-tooltip="tooltip"
+            data-placement="bottom">
+            <i class="fa fa-pencil"></i>
+        </button>
+        <button id="link-tool" type="button" class="btn btn-default edit-mode-tool" title="new link between two node" data-toggle="button"
+            data-tooltip="tooltip" data-placement="bottom">
+            <i class="fa fa-code-fork"></i>
+        </button>
+        <button id="del-tool" type="button" class="btn btn-default edit-mode-tool" title="delete service" data-toggle="button" data-tooltip="tooltip"
+            data-placement="bottom">
+            <i class="fa fa-close"></i>
+        </button>
+        <button id="del-all-tool" type="button" class="btn btn-default edit-mode-tool" title="drop canvas" data-tooltip="tooltip"
+            data-placement="bottom">
+            <i class="fa fa-trash"></i>
+        </button>
+        <button id="save-solution-tool" type="button" class="btn btn-default edit-mode-tool" title="save integration solution" data-tooltip="tooltip"
+            data-placement="bottom">
+            <i class="fa fa-floppy-o"></i>
+        </button>
+        <button id="saveas-solution-tool" type="button" class="btn btn-default edit-mode-tool" title="save as" data-tooltip="tooltip"
+            data-placement="bottom">
+            <i class="fa fa-copy"></i>
+        </button>
+        <button id="configure-tool" type="button" class="btn btn-default edit-mode-tool" title="configure this solution as a task"
+            data-tooltip="tooltip" data-placement="bottom">
+            <i class="fa fa-cogs"></i>
+        </button>
+    </div>
+    <div id="configure-mode-toolbar" class="btn-group toolbar">
+        <button id="run-tool" type="button" class="btn btn-default configure-mode-tool" title="save and run integration task" data-tooltip="tooltip"
+            data-placement="bottom">
+            <i class="fa fa-play"></i>
+        </button>
+        <button id="save-task-tool" type="button" class="btn btn-default configure-mode-tool" title="save integration task" data-tooltip="tooltip"
+            data-placement="bottom">
+            <i class="fa fa-floppy-o"></i>
+        </button>
+    </div>
+    <div id="common-toolbar" class="btn-group toolbar">
+        <button id="saveas-img-solution-tool" type="button" class="btn btn-default edit-mode-tool view-mode-tool" title="save as png"
+            data-tooltip="tooltip" data-placement="bottom">
+            <i class="fa fa-picture-o"></i>
+        </button>
+    </div>
+    <div id="legend-toolbar" class="btn-group toolbar">
+        <button id="legend-tool" type="button" class="btn btn-default" title="show legend" data-toggle="modal" data-target="#legend-modal"
+            data-tooltip="tooltip" data-placement="bottom">
+            <i class="fa fa-question"></i>
+        </button>
+    </div>
+</div>
+<!-- endregion -->
+
+<div style="position: relative; height: 100%">
+    <canvas id="canvas"></canvas>
+    <!-- region info-->
+    <div id="config-tag">
+        <div id="solution-info">
+            <input id="solutionID-input" style="display: none;" value="">
+            <div style='margin-bottom: 10px;'>
+                <b>Solution name: </b>
+                <span id="solution-name"></span>
+            </div>
+            <div style='margin-bottom: 10px;'>
+                <b>Solution participators: </b>
+                <span id="solution-author"></span>
+            </div>
+        </div>
+
+        <div id="task-info">
+            <input id="taskID-input" style="display: none;" value="">
+            <div style='margin-bottom: 10px;'>
+                <b>Task name: </b>
+                <span id="task-name"></span>
+            </div>
+            <div>
+                <b>Task participators: </b>
+                <span id="task-author"></span>
+            </div>
+        </div>
+    </div>
+    <!-- endregion -->
+</div>
+
+<ul class="list-group contextMenu" id="stageContextMenu">
+    <li id="clear-stage-menu" class="list-group-item edit-mode-menu solution-menu">
+        <a>clear all model service</a>
+    </li>
+</ul>
+<!-- endregion -->
+
+<!--region legend modal-->
+<div aria-hidden="true" tabIndex="-1" id='legend-modal' class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" id="close-modal" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">
+                    Legend
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div id="task-legend" class="table-responsive" style="margin-left: 25px;display: none;">
+
+                    <table class="table table-condensed" id="event-table">
+                        <caption>Data state legend: </caption>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="origin"></div>
+                                </td>
+                                <td>No data entity</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="optional"></div>
+                                </td>
+                                <td>Optional IO data</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="input"></div>
+                                </td>
+                                <td>User input data</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="ready"></div>
+                                </td>
+                                <td>Ready state</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="pending"></div>
+                                </td>
+                                <td>Pending state</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="failed"></div>
+                                </td>
+                                <td>Failed state</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="received"></div>
+                                </td>
+                                <td>Output or received state</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="table table-condensed" id="states-table">
+                        <caption>Model Service state legend: </caption>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="unready"></div>
+                                </td>
+                                <td>Unready to run state</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="pending"></div>
+                                </td>
+                                <td>Starting state</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="pause"></div>
+                                </td>
+                                <td>Pause state</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="running"></div>
+                                </td>
+                                <td>Running state</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="collapsed"></div>
+                                </td>
+                                <td>Collapsed state</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="finished"></div>
+                                </td>
+                                <td>Run successed state</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="table table-condensed" id="link-table">
+                        <caption>Link legend: </caption>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class=""></div>
+                                </td>
+                                <td>Link between service and IO data</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class=""></div>
+                                </td>
+                                <td>Link between two services</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="solution-legend" class="table-responsive" style="margin-left: 25px;display: none;">
+                    <table class="table table-condensed" id="solution-table">
+                        <caption>Solution diagram legend: </caption>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="states"></div>
+                                </td>
+                                <td>Model service</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="event"></div>
+                                </td>
+                                <td>Input or output data</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="optional"></div>
+                                </td>
+                                <td>Optional input or output data</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class=""></div>
+                                </td>
+                                <td>Link between service and IO data</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class=""></div>
+                                </td>
+                                <td>Link between two services</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--endregion-->
+
+<!-- region server side render data -->
+<% if(typeof solution != 'undefined'){ %>
+    <p id="solution-detail" style="display: none;">'
+        <%=solution %>'</p>
+    <% } %>
+        <% if(typeof task != 'undefined') {%>
+            <p id="task-detail" style="display: none">'
+                <%=task %>'</p>
+            <% } %>
+                <!--endregion-->

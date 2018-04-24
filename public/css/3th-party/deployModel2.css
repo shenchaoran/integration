@@ -1,0 +1,22 @@
+#divTable>table>tbody>tr>td:first-child{
+    cursor:pointer;
+}
+#divTable>table>thead>th:nth-child(2){
+    width:20px;
+    background-color: red;
+}
+#divTable>table{
+
+
+
+    overflow: scroll;
+    overflow-x: visible;
+    overflow-y: auto;
+}
+
+#divTable>table>tbody>tr>td:last-child>span{
+    margin-top:0px;
+    margin-left: 10px;
+    margin-bottom: 0px;
+
+}
