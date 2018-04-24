@@ -1,5 +1,9 @@
 let requestPromise = require('request-promise');
+let request = require('request');
 let setting = require('../config/setting');
+let ObjectID = require('mongodb').ObjectID;
+let fs = require('fs');
+let path = require('path');
 
 module.exports = RequestCtrl = {};
 
@@ -35,6 +39,50 @@ RequestCtrl.get = (url, form, isFullResponse, withRetry) => {
         return requestPromise(options);
     }
 };
+
+RequestCtrl.getFile = (url) => {
+    // let options = {
+    //     url: url,
+    //     method: 'GET',
+    //     qs: form,
+    //     resolveWithFullResponse: isFullResponse === true
+    // };
+    let fname;
+    let ext = '';
+    let newName = new ObjectID().toString();
+    newName = path.join(__dirname, newName);
+    return new Promise((resolve, reject) => {
+        request
+            .get(url)
+            .on('response', response => {
+                response.headers['content-type'];
+                fname = response.headers['content-disposition'];
+                if(fname) {
+                    if(fname.indexOf('filename=') !== -1) {
+                        fname = fname.substring(fname.indexOf('filename=') + 9);
+                    }
+                }
+                else {
+                    fname = new ObjectID().toString();
+                }
+                if(fname.lastIndexOf('.') !== -1) {
+                    ext = fname.substr(fname.lastIndexOf('.'));
+                }
+                newName += ext;
+            })
+            .pipe(fs.createWriteStream(newName))
+            .on('error', e => {
+                console.log(e);
+                return reject(e);
+            })
+            .on('close', () => {
+                console.log('close');
+            })
+            .on('finish', () => {
+                return resolve();
+            });
+    });
+}
 
 RequestCtrl.post = (url, body, type, withRetry) => {
     let options = {

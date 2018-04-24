@@ -108,12 +108,16 @@ module.exports = {
         } else if (stub.from.posType === 'MSC') {
             url = `http://${stub.from.host}:${stub.from.port}/geodata/${stub.from.id}`;
         } else if (stub.from.posType === 'DSC') {
-            url = `http://${stub.from.host}:${stub.from.port}/user/download?dataId=${stub.from.id}`;
+            url = `http://${stub.from.host}:${stub.from.port}/user/download?request-from-nodejs=1&dataId=${stub.from.id}`;
         }
-        return RequestCtrl.get(url, undefined, true, true)
+        return RequestCtrl.get(url, undefined, false, true)
             .then(response => {
-                fname = response.headers['Content-Disposition'];
-                fname = response.headers['content-disposition'];
+                response = JSON.parse(response);
+                fname = response.filename;
+
+                // fname = response.headers['Content-Disposition'];
+                // console.log(response.body.length);
+                // fname = response.headers['content-disposition'];
                 if(fname) {
                     if(fname.indexOf('filename=') !== -1) {
                         fname = fname.substring(fname.indexOf('filename=') + 9);
@@ -128,7 +132,9 @@ module.exports = {
                 let oid = (new ObjectID()).toString();
                 newName = oid + ext;
                 let newPath = path.join(setting.geo_data.path, newName);
-                return fs.writeFileAsync(newPath, response.body);
+                // 默认写文件编码为 utf8，但是MSC和DSC返回的是 null 编码
+                let fdata = new Buffer(response.data, 'binary');
+                return fs.writeFileAsync(newPath, fdata);
             })
             .then(() => geoDataDB.insert({
                 fname: fname,

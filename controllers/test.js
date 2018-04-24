@@ -7,23 +7,26 @@ let _ = require('lodash');
 let VisualizationCtrl = require('./visualization.controller');
 let DataCtrl = require('./data.controller');
 
-DataCtrl.fetchData({
-    from: {
-        host: '172.21.213.146',
-        port: '8060',
-        posType: 'MSC',
-        id: 'gd_f901b180-47c4-11e8-b29e-2facd065bf06'
-    }
-});
-
 // DataCtrl.fetchData({
 //     from: {
-//         host: '172.21.212.85',
-//         port: '8899',
-//         posType: 'DSC',
-//         id: '5adf21be54ca1f1070f1bc6c'
+//         host: '172.21.213.146',
+//         port: '8060',
+//         posType: 'MSC',
+//         id: 'gd_f901b180-47c4-11e8-b29e-2facd065bf06'
 //     }
 // });
+
+let stub = {
+    from: {
+        host: '172.21.212.85',
+        port: '8899',
+        posType: 'DSC',
+        id: '5adf21be54ca1f1070f1bc6c'
+    }
+};
+// let url = `http://${stub.from.host}:${stub.from.port}/user/download?dataId=${stub.from.id}`;
+// RequestCtrl.getFile(url);
+DataCtrl.fetchData(stub);
 
 // VisualizationCtrl.batchDeploy();
 
