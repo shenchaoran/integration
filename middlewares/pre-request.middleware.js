@@ -50,22 +50,22 @@ module.exports = (app) => {
     app.use('/visualization', express.static(path.join(__dirname, '../visualization_service')));
 
     // all cross origin
-    // app.all('*', function(req, res, next) {
-    //     // TODO 为防止CSRF攻击，应设置为前端所在的域名
-    //     res.header('Access-Control-Allow-Origin', '*');
-    //     res.header(
-    //         'Access-Control-Allow-Headers',
-    //         'Content-Type,Content-Length, Authorization, Accept,X-Requested-With'
-    //     );
-    //     res.header(
-    //         'Access-Control-Allow-Methods',
-    //         'PUT,POST,GET,DELETE,OPTIONS'
-    //     );
-    //     if (req.method == 'OPTIONS') {
-    //         // 预检请求直接返回
-    //         return res.sendStatus(200);
-    //     } else {
-    //         return next();
-    //     }
-    // });
+    app.all('*', function(req, res, next) {
+        // TODO 为防止CSRF攻击，应设置为前端所在的域名
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header(
+            'Access-Control-Allow-Headers',
+            'Content-Type,Content-Length, Authorization, Accept,X-Requested-With'
+        );
+        res.header(
+            'Access-Control-Allow-Methods',
+            'PUT,POST,GET,DELETE,OPTIONS'
+        );
+        if (req.method == 'OPTIONS') {
+            // 预检请求直接返回
+            return res.sendStatus(200);
+        } else {
+            return next();
+        }
+    });
 }

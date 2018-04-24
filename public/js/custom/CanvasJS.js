@@ -1010,7 +1010,7 @@ var CanvasJS = (() => {
                         // 另存为
                     case 'saveas-solution-tool':
                         couldSave = self.__setUser();
-                        if(couldSave) {
+                        if (couldSave) {
                             $('#save-aggre-solution-modal').modal('show');
                             self.__bindSaveSolutionEvent(1);
                         }
@@ -1024,7 +1024,7 @@ var CanvasJS = (() => {
                             }
                         );
                         couldSave = self.__setUser();
-                        if(couldSave) {
+                        if (couldSave) {
                             $('#save-aggre-solution-modal').modal('show');
                             self.__bindSaveSolutionEvent(0);
                         }
@@ -1622,48 +1622,44 @@ var CanvasJS = (() => {
             // endregion
         },
 
-        __setUser: function() {
+        __setUser: function () {
             let self = this;
             let jwt = localStorage.getItem('jwt');
             let user = localStorage.getItem('user');
-            if(user && jwt) {
+            if (user && jwt) {
                 user = JSON.parse(user);
                 jwt = JSON.parse(jwt);
-                if(jwt.expires > Date.now()) {
+                if (jwt.expires > Date.now()) {
                     self.__user = user;
                     return true;
-                }
-                else {
+                } else {
                     $('#signin-a').click();
                     return false;
                 }
-            }
-            else {
+            } else {
                 $('#signin-a').click();
                 return false;
             }
         },
 
-        __setAuthor: function() {
+        __setAuthor: function () {
             let self = this;
             let authors = _.get(self, '__solution.solutionInfo.author');
             $('#solution-author').empty();
             _.map(authors, author => {
                 let user;
-                if(author.avatar) {
+                if (author.avatar) {
                     user = `<span class="avatar" title="${author.username}" data-toggle='tooltip'>` +
-                                `<img src="data:image/png;base64,${author.avatar}">` +
-                            `</span>`
-                }
-                else if(author.username) {
+                        `<img src="data:image/png;base64,${author.avatar}">` +
+                        `</span>`
+                } else if (author.username) {
                     user = `<span class="avatar" title="${author.username}" data-toggle='tooltip'>` +
-                                author.username +
-                            `</span>`
-                }
-                else {
+                        author.username +
+                        `</span>`
+                } else {
                     user = '';
                 }
-                
+
                 $('#solution-author').append(user)
             });
 
@@ -1671,20 +1667,18 @@ var CanvasJS = (() => {
             $('#task-author').empty();
             _.map(authors, author => {
                 let user;
-                if(author.avatar) {
+                if (author.avatar) {
                     user = `<span class="avatar" title="${author.username}" data-toggle='tooltip'>` +
-                                `<img src="data:image/png;base64,${author.avatar}">` +
-                            `</span>`
-                }
-                else if(author.username) {
+                        `<img src="data:image/png;base64,${author.avatar}">` +
+                        `</span>`
+                } else if (author.username) {
                     user = `<span class="avatar" title="${author.username}" data-toggle='tooltip'>` +
-                                author.username +
-                            `</span>`
-                }
-                else {
+                        author.username +
+                        `</span>`
+                } else {
                     user = '';
                 }
-                
+
                 $('#task-author').append(user)
             });
         },
@@ -1699,25 +1693,25 @@ var CanvasJS = (() => {
                 focusInvalid: true,
                 submitHandler: function (form) {
                     var data = self.exportSolution();
-                    if(!data.solutionInfo) {
+                    if (!data.solutionInfo) {
                         data.solutionInfo = {};
                     }
                     data.solutionInfo.name = $('#solutionName').val();
                     data.solutionInfo.desc = $('#solutionDesc').val();
-                    
+
                     let user = {
                         _id: self.__user._id,
                         username: self.__user.username,
                         avatar: self.__user.avatar
                     };
-                    if(!data.solutionInfo.author) {
+                    if (!data.solutionInfo.author) {
                         data.solutionInfo.author = []
                     }
                     let v = _.find(data.solutionInfo.author, author => author._id === self.__user._id);
-                    if(!v) {
+                    if (!v) {
                         data.solutionInfo.author.push(user);
                     }
-                    
+
                     $('#loading-div').show();
                     $('#submit-form-btn').attr('disabled', true);
                     $.ajax({
@@ -1796,25 +1790,25 @@ var CanvasJS = (() => {
                 focusInvalid: true,
                 submitHandler: function (form) {
                     var data = self.exportTask();
-                    if(!data.taskInfo) {
+                    if (!data.taskInfo) {
                         data.taskInfo = {}
                     }
                     data.taskInfo.name = $('#taskName').val();
                     data.taskInfo.desc = $('#taskDesc').val();
-                    
+
                     let user = {
                         _id: self.__user._id,
                         username: self.__user.username,
                         avatar: self.__user.avatar
                     };
-                    if(!data.taskInfo.author) {
+                    if (!data.taskInfo.author) {
                         data.taskInfo.author = []
                     }
                     let v = _.find(data.taskInfo.author, author => author._id === self.__user._id);
-                    if(!v) {
+                    if (!v) {
                         data.taskInfo.author.push(user);
                     }
-                    
+
                     $('#loading-div').show();
                     $('#submit-form-btn').attr('disabled', true);
                     $.ajax({
@@ -2231,41 +2225,19 @@ var CanvasJS = (() => {
                         }
                     }
 
-                    // var dataDownloadURL =
-                    //     '/integration/data?taskID=' +
-                    //     self.__task._id +
-                    //     '&gdid=' +
-                    //     node.__gdid +
-                    //     '&msid=' +
-                    //     node.__MSID +
-                    //     '&stateID=' +
-                    //     node.__stateID +
-                    //     '&eventName=' +
-                    //     node.__eventName;
-                    // var dataDownloadURL = '/integration/data/' + node.__gdid;
-
-                    // dataVisualizationURL =
-                    //     '/visualizations?gdid=' + node.__gdid;
-
                     if ($('#' + id + '-download-data').length) {
                         if ($('#' + id + '-visualization-data').length) {}
                     } else {
                         $('#' + id + '-download-div').remove();
                         $(
-                            '<div id="' +
-                            id +
-                            '-download-div">' +
-                            '<p style="margin-top: 10px"><b>Download data: </b>&nbsp;&nbsp;' +
-                            '<button id="' +
-                            id +
-                            '-download-data" class="btn btn-default btn-xs down-event-btn">Download</button>' +
-                            '</p>' +
-                            '<p style="margin-top: 10px"><b>Data visualization: </b>&nbsp;&nbsp;' +
-                            '<button id="' +
-                            id +
-                            '-visualization-data" class="btn btn-default btn-xs down-event-btn">Visualization</button>' +
-                            '</p>' +
-                            '</div>'
+                            `<div id="${id}-download-div">
+                                <p style="margin-top: 10px"><b>Download data: </b>&nbsp;&nbsp;
+                                    <button id="${id}-download-data" class="btn btn-default btn-xs down-event-btn">Download</button>
+                                </p>
+                                <p style="margin-top: 10px"><b>Data visualization: </b>&nbsp;&nbsp;
+                                    <button id="${id}-visualization-data" class="btn btn-default btn-xs down-event-btn">Visualization</button>
+                                </p>
+                            </div>`
                         ).appendTo($('#' + id));
 
                         $('#' + id + '-visualization-data').on(
@@ -2277,7 +2249,6 @@ var CanvasJS = (() => {
                                 ) {
                                     $('#save-aggre-task-modal').modal('show');
                                 } else {
-                                    // window.location.href = dataVisualizationURL;
                                     window.open(dataVisualizationURL);
                                 }
                             }
@@ -2427,38 +2398,139 @@ var CanvasJS = (() => {
                             `).appendTo($dataInfoDialog);
 
                             // select from DSC
-                            // $(`
-                            //     <div style='margin-bottom: 10px;'>
-                            //         <p><b>Select data: </b></p>
-                            //         <div class='select-data-input-group'>
-                            //             <div tabindex='2' id='${id}-upload-data-input' type='text'></div>
-                            //             <button class='btn btn-primary' id="${id}-select-data">
-                            //                 <i class="glyphicon glyphicon-folder-open"></i>
-                            //             </button>
-                            //         </div>
-                            //     </div>
-                            // `).appendTo($dataInfoDialog);
+                            $(`
+                                <div style='margin-bottom: 10px;'>
+                                    <p><b>Select data: </b></p>
+                                    <span class='select-data-input-group'>
+                                        <div tabindex='2' id='${id}-upload-data-input' type='text'></div>
+                                        
+                                        <span>
+                                            <span tabindex="500" id='${id}-delete' title="Clear selected files" style='display: none;margin-right: -5px; border-radius: 0; border-left: none;' class="btn btn-default fileinput-remove fileinput-remove-button">
+                                                <i class="glyphicon glyphicon-trash"></i>
+                                            </span>
+                                            <button class='btn btn-primary' id="${id}-select-data">
+                                                <i class="glyphicon glyphicon-folder-open"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            `).appendTo($dataInfoDialog);
 
-                            // const DSCstr = localStorage.getItem('DSC');
-                            // const DSC = JSON.parse(DSCstr);
-                            // const host = '172.21.212.85';
-                            // const port = '8899';
-                            // const host = DSC.host;
-                            // const port = DSC.port;
-                            // $(`#${id}-upload-data-input`).on('click', () => {
+                            const DSCstr = localStorage.getItem('DSC');
+                            const DSC = JSON.parse(DSCstr);
+                            const host = '172.21.212.85';
+                            const port = '8899';
 
-                            // });
-                            // $(`#${id}-select-data`).on('click', () => {
-                            //     // 这里设置接受数据的 id
-                            //     window.currentDataId = id;
-                            //     window.open(`http://${host}:${port}/user/filemanager`, 'self-filemanager-dlg', 'height=500,width=900,top=100,left=100');
+                            $(`#${id}-delete`).on('click', () => {
+                                $(`#${id}-delete`).hide();
+                                $(`#${id}-upload-data-input`).empty();
+                                $(`#${id}-download-div`).remove();
 
-                            //     // postal
-                            //     //     .channel('BROWSER_CHANNEL')
-                            //     //     .subscribe(`DSC.${id}`, (data, envelope) => {
-                            //     //         $(`#${id}-upload-data-input`).text(data.filename);
-                            //     //     });
-                            // });
+                                node.__gdid = null;
+                                node.__isInput = false;
+                                node.fillColor = __getRGB(EventColor.origin);
+                                var dataList = self.__task.taskCfg.dataList;
+                                _.remove(dataList, item => item.MSID === node.__MSID && item.eventName === node.__eventName && item.stateID === node.__stateID)
+                            });
+
+                            $(`#${id}-select-data`).on('click', () => {
+                                // 这里设置接受数据的 id
+                                window.currentDataId = id;
+                                let fmUrl = `http://${host}:${port}/user/filemanager?parent-origin=${window.origin}`;
+                                let targetWindow = window.open(fmUrl, 'self-filemanager-dlg', 'height=500,width=900,top=100,left=100');
+
+                                window.addEventListener('message', (e) => {
+                                    console.log(e.origin);
+                                    if (e.origin === `http://${host}:${port}`) {
+                                        let data = JSON.parse(e.data);
+                                        if (data.code === 'filemanager') {
+                                            // console.log(data.msg);
+
+                                            $(`#${id}-upload-data-input`).append(data.msg.filename);
+                                            $(`#${id}-delete`).show();
+
+                                            self.__hasChanged = true;
+                                            var ms = self.__getServiceByID(node.__MSID);
+                                            // TODO
+                                            var inputData = {
+                                                from: {
+                                                    host: host,
+                                                    port: port,
+                                                    posType: 'DSC',
+                                                    id: data.msg.oid
+                                                },
+                                                to: {
+                                                    host: ms.host,
+                                                    port: ms.port,
+                                                    serviceType: ms.serviceType
+                                                },
+                                                state: DataState.ready,
+                                                isInput: true,
+                                                isMid: false,
+
+                                                fname: data.msg.filename,
+
+                                                MSID: node.__MSID,
+                                                stateID: node.__stateID,
+                                                eventName: node.__eventName
+                                            };
+
+                                            var hasInserted = false;
+                                            var dataList = self.__task.taskCfg.dataList;
+                                            for (var i = 0; i < dataList.length; i++) {
+                                                // 已经上传过，重新上传替换
+                                                if (
+                                                    dataList[i].MSID == node.__MSID &&
+                                                    dataList[i].stateID ==
+                                                    node.__stateID &&
+                                                    dataList[i].eventName ==
+                                                    node.__eventName
+                                                ) {
+                                                    dataList[i].id = data.msg.oid;
+                                                    hasInserted = true;
+                                                    break;
+                                                }
+                                            }
+
+                                            if (!hasInserted) {
+                                                dataList.push(inputData);
+                                            }
+                                            node.__isInput = true;
+                                            node.__gdid = data.msg.oid;
+                                            node.fillColor = __getRGB(EventColor.input);
+
+                                            addDownBtn();
+
+                                            $.gritter.add({
+                                                title: 'Notice:',
+                                                text: 'Select data success!',
+                                                sticky: false,
+                                                time: 2000
+                                            });
+                                            return;
+                                        }
+                                    }
+                                });
+
+                                // let parentOrigin;
+                                // let groups = window.location.href.split('/\?|\&/g');
+                                // for(let i=0;i<groups.length; i++) {
+                                //     if(groups[i].indexOf('parent-origin') != -1) {
+                                //         parentOrigin = groups[i].substr('parent-origin='.length);
+                                //     }
+                                // }
+                                // if(parentOrigin) {
+                                //     window.opener.postMessage(JSON.stringify({
+                                //         code: 'filemanager',
+                                //         msg: {
+                                //             parentid: parentid,
+                                //             filename: filename,
+                                //             format: format, 
+                                //             oid: oid
+                                //         }
+                                //     }), parentOrigin);
+                                // }
+                            });
 
                             // TODO 验证数据合法性
                             $('#' + id + '-upload-data')
@@ -2692,7 +2764,7 @@ var CanvasJS = (() => {
                                         localAttributes[i]._$.local +
                                         '" data-toggle="tab">' +
                                         tabTitle +
-                                        '</a>' +
+                                        '</span>' +
                                         '</li>'
                                     )
                                 );
@@ -3627,7 +3699,7 @@ var CanvasJS = (() => {
 
                 this.registerSocket();
             }
-            
+
             this.__setAuthor();
         },
 
