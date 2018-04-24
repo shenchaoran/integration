@@ -113,6 +113,7 @@ module.exports = {
         return RequestCtrl.get(url, undefined, true, true)
             .then(response => {
                 fname = response.headers['Content-Disposition'];
+                fname = response.headers['content-disposition'];
                 if(fname) {
                     if(fname.indexOf('filename=') !== -1) {
                         fname = fname.substring(fname.indexOf('filename=') + 9);

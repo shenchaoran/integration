@@ -54,7 +54,6 @@ router.route('/')
             .catch(next);
     });
 
-// 上传
 router.route('/')
     .post((req, res, next) => {
         let form = new formidable.IncomingForm();
@@ -76,7 +75,6 @@ router.route('/')
         });
     });
 
-// 下载
 router.route('/:id')
     .get((req, res, next) => {
         DataCtrl.download(req.params.id)
