@@ -145,6 +145,7 @@ module.exports = function DataDriver(task) {
                 } else if (serviceType === 'data refactor') {
                     url = `http://${host}:${port}/refactor/call`;
                 }
+                console.log(url, form);
                 return RequestCtrl.get(url, form, false, true)
             })
             .then(res => {
