@@ -106,11 +106,13 @@ module.exports = {
                 _id: stub.from.id
             });
         } else if (stub.from.posType === 'MSC') {
-            url = `http://${stub.from.host}:${stub.from.port}/geodata/${stub.from.id}`;
+            url = `http://${stub.from.host}:${stub.from.port}/geodata/${stub.from.id}?`;
         } else if (stub.from.posType === 'DSC') {
-            url = `http://${stub.from.host}:${stub.from.port}/user/download?request-from-nodejs=1&dataId=${stub.from.id}`;
+            url = `http://${stub.from.host}:${stub.from.port}/user/download?dataId=${stub.from.id}`;
         }
-        return RequestCtrl.get(url, undefined, false, true)
+        return RequestCtrl.get(url, {
+            'request-from-nodejs': 1
+        }, false, true)
             .then(response => {
                 response = JSON.parse(response);
                 fname = response.filename;

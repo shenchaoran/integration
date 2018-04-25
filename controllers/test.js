@@ -1,11 +1,28 @@
+
 // let geoDataDB  = require('../models/data.model');
+let ObjectID = require('mongodb').ObjectID;
 let Promise = require('bluebird');
 let RequestCtrl = require('./request.controller');
-let fs = require('fs');
+let fs = Promise.promisifyAll(require('fs'));
 let path = require('path');
 let _ = require('lodash');
 let VisualizationCtrl = require('./visualization.controller');
 let DataCtrl = require('./data.controller');
+
+// let url = 'http://localhost:9990/integration/data/5adf5e23a21f3cd2f0a568cb';
+// let fname;
+// let ext;
+// let newName = path.join(__dirname, new ObjectID().toString()) + '.zip';
+// RequestCtrl.get(url, undefined, true)
+//     .then(res => {
+//         console.log(res.data.length);
+//         let buf = Buffer.from(res.data, 'binary');
+//         console.log(buf.length);
+//         return fs.writeFileAsync(newName, buf)
+//     })
+//     .catch(e => {
+//         console.log(e);
+//     })
 
 // DataCtrl.fetchData({
 //     from: {
@@ -16,17 +33,18 @@ let DataCtrl = require('./data.controller');
 //     }
 // });
 
-let stub = {
-    from: {
-        host: '172.21.212.85',
-        port: '8899',
-        posType: 'DSC',
-        id: '5adf21be54ca1f1070f1bc6c'
-    }
-};
+// let stub = {
+//     from: {
+//         host: '172.21.212.85',
+//         port: '8899',
+//         posType: 'DSC',
+//         id: '5adf21be54ca1f1070f1bc6c'
+//     }
+// };
+
 // let url = `http://${stub.from.host}:${stub.from.port}/user/download?dataId=${stub.from.id}`;
 // RequestCtrl.getFile(url);
-DataCtrl.fetchData(stub);
+// DataCtrl.fetchData(stub);
 
 // VisualizationCtrl.batchDeploy();
 

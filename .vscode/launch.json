@@ -28,7 +28,7 @@
             "type": "node",
             "request": "attach",
             "name": "Attach",
-            "port": 24686,
+            "port": 24688,
             "restart": true
         },
         {
