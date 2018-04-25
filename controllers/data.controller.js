@@ -98,9 +98,7 @@ module.exports = {
     // 获取 数据服务器/模型服务器 上的数据，并缓存到本地
     fetchData: (stub) => {
         let url;
-        let fname;
-        let ext = '';
-        let newName;
+        let newName = new ObjectID().toString();
         if (stub.from.posType === 'LOCAL') {
             return geoDataDB.findOne({
                 _id: stub.from.id
@@ -110,38 +108,11 @@ module.exports = {
         } else if (stub.from.posType === 'DSC') {
             url = `http://${stub.from.host}:${stub.from.port}/user/download?dataId=${stub.from.id}`;
         }
-        return RequestCtrl.get(url, {
-            'request-from-nodejs': 1
-        }, false, true)
-            .then(response => {
-                response = JSON.parse(response);
-                fname = response.filename;
-
-                // fname = response.headers['Content-Disposition'];
-                // console.log(response.body.length);
-                // fname = response.headers['content-disposition'];
-                if(fname) {
-                    if(fname.indexOf('filename=') !== -1) {
-                        fname = fname.substring(fname.indexOf('filename=') + 9);
-                    }
-                }
-                else {
-                    fname = new ObjectID().toString();
-                }
-                if(fname.lastIndexOf('.') !== -1) {
-                    ext = fname.substr(fname.lastIndexOf('.'));
-                }
-                let oid = (new ObjectID()).toString();
-                newName = oid + ext;
-                let newPath = path.join(setting.geo_data.path, newName);
-                // 默认写文件编码为 utf8，但是MSC和DSC返回的是 null 编码
-                let fdata = new Buffer(response.data, 'binary');
-                return fs.writeFileAsync(newPath, fdata);
-            })
-            .then(() => geoDataDB.insert({
-                fname: fname,
+        return RequestCtrl.getFile(url, newName)
+            .then(rst => geoDataDB.insert({
+                fname: rst.fname,
                 posType: stub.from.posType,
-                path: newName
+                path: rst.newName
             }))
             .then(doc => Promise.resolve(doc))
             .catch(e => {

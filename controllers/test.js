@@ -9,7 +9,9 @@ let _ = require('lodash');
 let VisualizationCtrl = require('./visualization.controller');
 let DataCtrl = require('./data.controller');
 
-// let url = 'http://localhost:9990/integration/data/5adf5e23a21f3cd2f0a568cb';
+let url = 'http://localhost:9990/integration/data/5adf5e23a21f3cd2f0a568cb';
+RequestCtrl.getFile(url, path.join(__dirname, '1'));
+
 // let fname;
 // let ext;
 // let newName = path.join(__dirname, new ObjectID().toString()) + '.zip';

@@ -2,8 +2,10 @@ let requestPromise = require('request-promise');
 let request = require('request');
 let setting = require('../config/setting');
 let ObjectID = require('mongodb').ObjectID;
-let fs = require('fs');
+let Promise = require('bluebird');
+let fs = Promise.promisifyAll(require('fs'));
 let path = require('path');
+let http = require('http');
 
 module.exports = RequestCtrl = {};
 
@@ -40,46 +42,56 @@ RequestCtrl.get = (url, form, isFullResponse, withRetry) => {
     }
 };
 
-RequestCtrl.getFile = (url) => {
-    // let options = {
-    //     url: url,
-    //     method: 'GET',
-    //     qs: form,
-    //     resolveWithFullResponse: isFullResponse === true
-    // };
+RequestCtrl.getFile = (url, newName) => {
     let fname;
     let ext = '';
-    let newName = new ObjectID().toString();
-    newName = path.join(__dirname, newName);
+    // let buf1 = new Buffer(0);
+    // let buf2;
+    // let strBuf = '';
     return new Promise((resolve, reject) => {
-        request
-            .get(url)
-            .on('response', response => {
-                response.headers['content-type'];
-                fname = response.headers['content-disposition'];
-                if(fname) {
-                    if(fname.indexOf('filename=') !== -1) {
-                        fname = fname.substring(fname.indexOf('filename=') + 9);
-                    }
+        http.get(url, response => {
+            fname = response.headers['content-disposition'];
+            if(fname) {
+                if(fname.indexOf('filename=') !== -1) {
+                    fname = fname.substring(fname.indexOf('filename=') + 9);
                 }
-                else {
-                    fname = new ObjectID().toString();
-                }
-                if(fname.lastIndexOf('.') !== -1) {
-                    ext = fname.substr(fname.lastIndexOf('.'));
-                }
-                newName += ext;
-            })
-            .pipe(fs.createWriteStream(newName))
+            }
+            else {
+                fname = new ObjectID().toString();
+            }
+            if(fname.lastIndexOf('.') !== -1) {
+                ext = fname.substr(fname.lastIndexOf('.'));
+            }
+            // distPath += '-1' + ext;
+            newName += ext;
+            let distPath = path.join(setting.geo_data.path, newName);
+            let fd = fs.openSync(distPath, 'w');
+
+            response.on('data', chunk => {
+                fs.writeSync(fd, chunk, 0, chunk.length);
+                // buf1 = Buffer.concat([buf1, chunk]);
+                // strBuf += chunk.toString('ascii');
+            });
+
+            response.on('end', chunk => {
+                fs.closeSync(fd);
+                return resolve({
+                    fname: fname,
+                    newName: newName
+                });
+                // buf2 = Buffer.from(strBuf, 'ascii');
+                // fs.writeFileSync(distPath + '-2' + ext, buf1);
+                // fs.writeFileSync(distPath + '-3' + ext, buf2);
+            });
+
+            response.on('error', e => {
+                console.log(e);
+                return reject(e);
+            });
+        })
             .on('error', e => {
                 console.log(e);
                 return reject(e);
-            })
-            .on('close', () => {
-                console.log('close');
-            })
-            .on('finish', () => {
-                return resolve();
             });
     });
 }
