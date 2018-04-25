@@ -246,14 +246,15 @@ module.exports = function DataDriver(task) {
                     if (endState === 0) {
                         setTimeout(polling, 5000);
                     } else {
+                        let newStubs;
                         if (endState === 1) {
                             msState.state = 'SUCCEED';
+                            newStubs = _output2Stubs(host, port, MSinsID, output, serviceType);
+                            this.task.taskCfg.dataList = _.concat(this.task.taskCfg.dataList, newStubs);
                         } else if (endState === -1) {
                             msState.state = 'COLLAPSED';
                         }
 
-                        let newStubs = _output2Stubs(host, port, MSinsID, output, serviceType);
-                        this.task.taskCfg.dataList = _.concat(this.task.taskCfg.dataList, newStubs);
                         _updateInstance()
                             .then(() => {
                                 _emit('service stoped', {
@@ -312,7 +313,14 @@ module.exports = function DataDriver(task) {
                             StateName: event.stateName,
                             StateDes: event.stateDes
                         });
-                    } else if (event._$.optional === 0) {
+                    } else if (
+                        event._$.optional === 0 
+                        || event._$.optional === undefined 
+                        || event._$.optional === '0' 
+                        || event._$.optional === false 
+                        || event._$.optional === 'false'
+                        || event._$.optional === 'False'
+                    ) {
                         ready = false;
                     }
                     else {
