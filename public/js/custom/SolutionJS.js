@@ -594,6 +594,7 @@ module.exports = (function () {
                     self.__buildTab12List('data', itemData);
                 }
             });
+
         },
 
         // create empty view DOM of tab 1 and tab 2

@@ -2,13 +2,13 @@
  * Created by SCR on 2017/7/17.
  */
 
-var SolutionLibrary = (function() {
+var SolutionLibrary = (function () {
     var __url = '/integration/solution/all';
     var __webixSolutionTable = null;
     var __solutionsSegment = null;
 
     return {
-        init: function() {
+        init: function () {
             // console.log('sln lib');
             // var DSCstr = $('#DSC').text().slice(1, -1);
             // if (!DSCstr || DSCstr == '') {
@@ -36,6 +36,21 @@ var SolutionLibrary = (function() {
             //     });
             //
 
+            
+            // ko.applyBindings({
+            //         menu: {
+            //             opt1: clicked,
+            //             opt2: clicked
+            //         },
+            //         value: 'some value',
+            //         clicked: clicked
+            //     },
+            //     $('#ko-test')[0]);
+
+            // function clicked(data) {
+            //     alert('oh, you clicked me! ah, and you typed "' + data.value() + '"');
+            // }
+
             var self = this;
             $.ajax({
                     url: __url,
@@ -45,7 +60,7 @@ var SolutionLibrary = (function() {
                     type: 'GET',
                     dataType: 'json'
                 })
-                .done(function(res) {
+                .done(function (res) {
                     if (res.error) {
                         $.gritter.add({
                             title: 'Warning:',
@@ -57,15 +72,15 @@ var SolutionLibrary = (function() {
                         __solutionsSegment = res.solutionsSegment;
                         _.map(__solutionsSegment, sln => {
                             sln.authorName = _.reduce(sln.author, (rst, v, k) => {
-                                rst += v.username? v.username + ', ' : '';
+                                rst += v.username ? v.username + ', ' : '';
                                 return rst;
                             }, '');
-                            sln.authorName = sln.authorName.substr(0, sln.authorName.length-2);
+                            sln.authorName = sln.authorName.substr(0, sln.authorName.length - 2);
                         });
                         self.__buildSolutionList();
                     }
                 })
-                .fail(function(error) {
+                .fail(function (error) {
                     $.gritter.add({
                         title: 'Warning:',
                         text: 'Get solution library failed!<br><pre>' + JSON.stringify(error, null, 4) + '</pre>',
@@ -75,7 +90,7 @@ var SolutionLibrary = (function() {
                 });
         },
 
-        __buildSolutionList: function() {
+        __buildSolutionList: function () {
             var width = $('#solution-list').width();
             var height = 600;
             var columns = [{
@@ -111,7 +126,7 @@ var SolutionLibrary = (function() {
             columns.push({
                 id: 'operate',
                 header: 'Operate',
-                template: function(obj) {
+                template: function (obj) {
                     return "<div>" +
                         "<button class='btn btn-default btn-xs solution-operation-btn solution-detail-btn' title='solution detail'><i class='fa fa-info'></i></button>" +
                         "<button class='btn btn-default btn-xs solution-operation-btn solution-edit-btn' title='edit solution'><i class='fa fa-pencil-square'></i></button>" +
@@ -155,45 +170,45 @@ var SolutionLibrary = (function() {
             this.__bindResizeEvent();
         },
 
-        __bindResizeEvent: function() {
-            var resizeTable = function() {
+        __bindResizeEvent: function () {
+            var resizeTable = function () {
                 __webixSolutionTable.define('width', $('#solution-list').width());
                 __webixSolutionTable.resize();
             };
 
-            $('.header-section .toggle-btn').on('click', function() {
+            $('.header-section .toggle-btn').on('click', function () {
                 resizeTable();
             });
 
-            window.onresize = function() {
+            window.onresize = function () {
                 resizeTable();
             };
         },
 
-        __bindDetailBtnEvent: function() {
-            __webixSolutionTable.on_click['solution-detail-btn'] = function(e, obj, trg) {
+        __bindDetailBtnEvent: function () {
+            __webixSolutionTable.on_click['solution-detail-btn'] = function (e, obj, trg) {
                 var solutionSegment = this.getItem(obj.row);
                 window.open('/integration/solution/detail?_id=' + solutionSegment._id);
             };
         },
 
-        __bindEditBtnEvent: function() {
-            __webixSolutionTable.on_click['solution-edit-btn'] = function(e, obj, trg) {
+        __bindEditBtnEvent: function () {
+            __webixSolutionTable.on_click['solution-edit-btn'] = function (e, obj, trg) {
                 var solutionSegment = this.getItem(obj.row);
                 window.open('/integration/solution/edit?_id=' + solutionSegment._id);
             };
         },
 
-        __bindConfigureBtnEvent: function() {
-            __webixSolutionTable.on_click['solution-configure-btn'] = function(e, obj, trg) {
+        __bindConfigureBtnEvent: function () {
+            __webixSolutionTable.on_click['solution-configure-btn'] = function (e, obj, trg) {
                 var solutionSegment = this.getItem(obj.row);
                 window.open('/integration/task/new?solutionID=' + solutionSegment._id);
             };
         },
 
-        __bindDeleteBtnEvent: function() {
+        __bindDeleteBtnEvent: function () {
             var self = this;
-            __webixSolutionTable.on_click['solution-delete-btn'] = function(e, obj, trg) {
+            __webixSolutionTable.on_click['solution-delete-btn'] = function (e, obj, trg) {
                 if (!confirm('Are you sure to delete this solution?')) {
                     return;
                 }
@@ -207,7 +222,7 @@ var SolutionLibrary = (function() {
                         type: 'DELETE',
                         dataType: 'json'
                     })
-                    .done(function(res) {
+                    .done(function (res) {
                         if (res.error) {
                             $.gritter.add({
                                 title: 'Warning:',
@@ -226,7 +241,7 @@ var SolutionLibrary = (function() {
                         }
 
                     })
-                    .fail(function(error) {
+                    .fail(function (error) {
                         $.gritter.add({
                             title: 'Warning:',
                             text: 'Delete solution failed!<br><pre>' + JSON.stringify(error, null, 4) + '</pre>',
@@ -237,7 +252,7 @@ var SolutionLibrary = (function() {
             };
         },
 
-        __deleteSolutionTableByID: function(rowID) {
+        __deleteSolutionTableByID: function (rowID) {
             __webixSolutionTable.remove(rowID);
         }
     };

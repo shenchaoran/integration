@@ -9,8 +9,26 @@ let _ = require('lodash');
 let VisualizationCtrl = require('./visualization.controller');
 let DataCtrl = require('./data.controller');
 
-let url = 'http://localhost:9990/integration/data/5adf5e23a21f3cd2f0a568cb';
-RequestCtrl.getFile(url, path.join(__dirname, '1'));
+let i=0;
+func = (a) => {
+    new Promise((resolve, reject) => {
+        // a = Math.random();
+        if(i === 0) {
+            a=5;
+            i++;
+        }
+        return resolve();
+    })
+        .then(() => {
+            console.log(a);  
+        });
+}
+
+func(1)
+func(2)
+
+// let url = 'http://localhost:9990/integration/data/5adf5e23a21f3cd2f0a568cb';
+// RequestCtrl.getFile(url, path.join(__dirname, '1'));
 
 // let fname;
 // let ext;
