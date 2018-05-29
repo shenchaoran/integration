@@ -135,7 +135,7 @@ module.exports = {
                 .then(res => {
                     res = JSON.parse(res);
                     return Promise.resolve({
-                        id: res.gd_id
+                        id: res.data
                     })
                 });
         } else if (destination.serviceType === 'data map' || destination.serviceType === 'data refactor') {

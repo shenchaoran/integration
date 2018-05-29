@@ -153,8 +153,9 @@ module.exports = function DataDriver(task) {
                 let msr_id;
                 if(serviceType === 'model') {
                     res = JSON.parse(res);
-                    if (res.res === 'suc') {
-                        msr_id = res.msr_id;
+
+                    if (res.result === 'suc') {
+                        msr_id = res.data;
                     } else {
                         return Promise.reject(res);
                     }
@@ -196,7 +197,7 @@ module.exports = function DataDriver(task) {
                     return 0;
                 } else if (res.result == 'suc') {
                     let msr = res.data;
-                    if (msr.msr_time !== 0) {
+                    if (msr.msr_span !== 0) {
                         output = msr.msr_output;
                         return msr.msr_status;
                     } else {
@@ -403,7 +404,8 @@ module.exports = function DataDriver(task) {
                     }
                 } else if (event.type === 'out') {
                     params.push({
-                        filename: new ObjectID(),
+                        // TODO file MIME type 写死了
+                        filename: (new ObjectID().toHexString()) + '.xml',
                         pid: pid ? pid : -1,
                         iotype: 'out'
                     });
