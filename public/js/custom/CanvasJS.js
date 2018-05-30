@@ -2418,7 +2418,9 @@ var CanvasJS = (() => {
 
                             const DSCstr = localStorage.getItem('DSC');
                             const DSC = JSON.parse(DSCstr);
-                            const host = '172.21.212.85';
+                            // const host = '172.21.212.85';
+                            // const port = '8899';
+                            const host = '106.14.78.235';
                             const port = '8899';
 
                             $(`#${id}-delete`).on('click', () => {
