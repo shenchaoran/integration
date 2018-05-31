@@ -3,7 +3,7 @@
     "version": "0.0.0",
     "private": true,
     "scripts": {
-        "start": "npm run start",
+        "start": "node app.js",
         "grunt": "grunt --force",
         "serve": "nodemon --inspect=0.0.0.0:24688 app.js"
     },

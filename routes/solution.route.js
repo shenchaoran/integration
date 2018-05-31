@@ -15,7 +15,7 @@ router.route('/')
     .delete(function(req, res, next) {
         let _id = req.body._id;
         if(_id) {
-            solutionDB.remove()
+            solutionDB.remove({_id: _id})
                 .then(rst => {
                     return res.json({
                         error: null,

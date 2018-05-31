@@ -8,7 +8,7 @@ module.exports = {
         version: 'v0.01'
     },
     auth: false,
-    port: '9990',
+    port: '6868',
     jwt: {
         secret: 'asdl;fjl;asdjflasjkfsl;jfdl;asdfjl;asdjkflsda',
         expires: 7
