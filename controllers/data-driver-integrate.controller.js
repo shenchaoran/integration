@@ -371,7 +371,8 @@ module.exports = function DataDriver(task) {
                             in_oid: stub.id,
                             in_filename: stub.fname,
                             out_dir: stub.pid ? stub.pid : -1,
-                            out_filename: new ObjectID(),
+                            // TODO file MIME type 写死了
+                            out_filename: (new ObjectID().toHexString()) + '.xml',
                             callType: service.callType
                         };
                     }
