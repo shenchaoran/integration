@@ -16,6 +16,10 @@ router.use('/integration/network', networkRoute);
 router.use('/visualizations', visualRoute);
 router.use('/user', userRoute);
 
+router.route('/')
+    .get((req, res, next) => {
+        return res.redirect('/index');
+    });
 
 router.route('/index')
     .get((req, res, next) => {
