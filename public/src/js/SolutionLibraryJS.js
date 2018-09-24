@@ -36,7 +36,7 @@ var SolutionLibrary = (function () {
             //     });
             //
 
-            
+
             // ko.applyBindings({
             //         menu: {
             //             opt1: clicked,

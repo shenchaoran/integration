@@ -2,7 +2,7 @@
  * Created by SCR on 2017/8/2.
  */
 /*jshint esversion: 6 */
-let CanvasJS = require('./CanvasJS');
+var CanvasJS = require('./CanvasJS');
 
 module.exports = (function () {
     __HeaderHeight = 40;
@@ -455,10 +455,11 @@ module.exports = (function () {
                 }
                 return serviceList;
             }
+            var serviceList
             if (serviceType == 'model') {
                 // __webixSelectedModelList.clearAll();
                 selectedWebixList = __webixSelectedModelList;
-                var serviceList = getNewItems();
+                serviceList = getNewItems();
                 getServiceListDetail(serviceType, serviceList, (err, serviceListDetail) => {
                     for (let i = 0; i < serviceListDetail.length; i++) {
                         if (serviceListDetail[i].error) {
@@ -481,7 +482,7 @@ module.exports = (function () {
                 else if (serviceType == 'data refactor') {
                     selectedWebixList = __webixSelectedDataRefactorList;
                 }
-                var serviceList = getNewItems();
+                serviceList = getNewItems();
                 _.map(serviceList, service => {
                     selectedWebixList.add(service);
                 });

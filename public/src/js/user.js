@@ -126,11 +126,11 @@ $('html').click((e) => {
     }
     if(_.indexOf(filters, '#' + e.target.id) !== -1) {
         return;
-    };
+    }
     // if(e.target.id === 'dropdown' || e.target.id === 'avatar' || e.target.id === 'signup-a' || e.target.id === 'signin-a') {
     //     return ;
     // }
     $('#signin').css('display', 'none');
     $('#signup').css('display', 'none');
     $('#signout').css('display', 'none');
-})
+});

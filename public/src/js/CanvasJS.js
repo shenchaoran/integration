@@ -7,7 +7,7 @@ var io = require('socket.io-client');
 var qs = require('querystring');
 var xpath = require('xpath');
 var dom = require('xmldom').DOMParser;
-let _ = require('lodash');
+var _ = require('lodash');
 
 var CanvasJS = (() => {
     // region private

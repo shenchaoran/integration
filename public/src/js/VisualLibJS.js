@@ -2,7 +2,7 @@
  * Created by SCR on 2017/8/9.
  */
 /*jshint esversion: 6 */
-let qs = require('qs');
+var qs = require('qs');
 
 module.exports = (function() {
     var __webixTable = null;
