@@ -31500,7 +31500,7 @@ var qs = require('querystring');
 var xpath = require('xpath');
 var dom = require('xmldom').DOMParser;
 var _ = require('lodash');
-
+ 
 var CanvasJS = (() => {
     // region private
     var __STATES_WIDTH = 115;
