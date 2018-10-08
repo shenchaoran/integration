@@ -1,0 +1,116 @@
+
+.pagination.square{
+    margin:0 auto;
+    text-align: center;
+}
+.pagination.square >li>a,
+.pagination.queare>li>span{
+    margin:0 5px;
+    border:1px solid #dddddd;
+}
+.pagination.square>li:first-child>a,
+.pagination.square>li:first-child>span,
+.pagination.square>li:last-child>a,
+.pagination.square>li:last-child>span{
+    margin-left:0px;
+    padding-left:10px;
+    padding-right:10px;
+    border-radius:0px;
+}
+.table.table-hover>thead>tr>th,
+.table.table-hover>tbody>tr>td{
+    text-align:center;
+}
+#modelDes{
+    height:400px;
+}
+/*竖排选项卡 */
+#tabDiv{
+    height:400px;
+}
+.vertical-tab {
+        width: 15%;
+        height: 100%;
+        float: left;
+        overflow: hidden;
+    }
+
+.vertical-tab > li {
+    text-align: center;
+}
+.vertical-tab > li>a{
+    font-weight: bold;
+}
+.vertical-tab > li.active > a, .vertical-tab > li.active > a:focus, .vertical-tab > li.active > a:hover {
+    border: solid #ccc;
+    border-width: 1px 0px 1px 1px;
+    background-color: #ffffff;
+    border-right: 1px solid #ffffff;
+    z-index: 2;
+}
+
+.vertical-tab > li > a {
+    border-radius: 4px 0px 0px 4px;
+}
+
+.vertical-tab-content {
+    float: left;
+    width: 85%;
+    height: 100%;
+    padding: 5px;
+    margin-left: -1px;
+    margin-bottom: 2px;
+    border-radius: 4px 4px 4px 4px;
+    border: solid 1px #ccc;
+    color: #666;
+}
+
+.send {
+    position: relative;
+    width: 90%;
+    background: #FFFFFF;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px; /* 圆角 */
+    border: 1px solid #ccc;
+}
+
+.tag {
+    width: 300px;
+    min-height: 30px;
+    border: 1px solid #ccc;
+    position: relative;
+    padding: 10px;
+    background-color: #ccc;
+    border-radius: 4px;
+    margin-left: 30px;
+    -moz-box-shadow:1px 1px 2px hsla(0, 0%, 0%, 0.3);
+    -webkit-box-shadow:1px 1px 2px hsla(0, 0%, 0%, 0.3);
+    box-shadow:1px 1px 2px hsla(0, 0%, 0%, 0.3);
+}
+
+.tag:before, .tag:after {
+    position:absolute;
+    content:"\00a0";
+    width:0px;
+    height:0px;
+    border-width:8px 18px 8px 0;
+    border-style:solid;
+    border-color:transparent #CCC transparent transparent;
+    top:5px;
+    left:-18px;
+
+}
+
+.tag:after {
+    bottom: -33px;
+    border-color: #FFF transparent transparent;
+}
+/* 进度条*/
+#progressDiv{
+    width:100%;
+    margin-top: 5px;
+    margin-bottom: -20px;
+    margin-left: 0px;
+
+}

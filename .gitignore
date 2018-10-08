@@ -5,4 +5,5 @@ visualization_service
 测试
 /public/js/browserBundle.js
 visualization_service.rar
-public/dist
+public/dist/css/custom
+public/dist/js/custom

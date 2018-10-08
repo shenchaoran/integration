@@ -25,7 +25,7 @@ var cssSrc = 'public/src/css/*.scss',
     jsSrc = 'public/src/js/*.js',
     indexJS = 'public/src/js/index.js',
     cssDist = 'public/dist/css/custom',
-    jsName = 'bundle.js',
+    jsName = 'bundle.min.js',
     jsDist = 'public/dist/js/custom';
 
 gulp.task('css', () => {
