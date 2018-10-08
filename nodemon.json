@@ -1,0 +1,17 @@
+{
+    "verbose": true,
+    "ignore": [
+        "node_modules",
+        ".vscode",
+        ".gitignore",
+        ".idea",
+        "public",
+        "test",
+        "bin",
+        "views",
+        "visualization_service",
+        "geo_data",
+        "helper",
+        "geo_model"
+    ]
+}

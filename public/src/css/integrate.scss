@@ -1,0 +1,21 @@
+.main-content{
+    background: #ffffff;
+}
+.render-div{
+    display: none;
+}
+.rander-table{
+    margin: auto 20px;
+}
+.table-operate{
+    margin-right:10px;
+}
+.gritter-item-wrapper pre{
+    max-height: 100px;
+}
+.gritter-item-wrapper,.Notice span{
+    color: #78f378;
+}
+.gritter-item-wrapper,.Warning span{
+    color: #ff4f4a;
+}

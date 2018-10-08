@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Solution library</title>
+    <%- include ../shared/headerInclude.ejs %>
+
+</head>
+
+<body class="left-side-collapsed">
+    <%- include ../shared/header.ejs %>
+        <article>
+            <div class="main-content" style="">
+
+                <div class="wrapper row dataList">
+                    <h2 class="col-lg-12 col-md-12 col-sm-12 col-xs-12">Solution library</h2>
+
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div id="solution-list-pager" style="margin: 15px auto;"></div>
+                        <div id="solution-list"></div>
+                    </div>
+                </div>
+
+                <!-- <% if(typeof DSC != 'undefined'){ %>
+                    <div style='display: none;' id='DSC'>
+                        <%=DSC %>
+                    </div>
+                    <% } %> -->
+
+
+            </div>
+
+            <!-- <div style='height: 555px;  width: 555px;'>
+                <div data-bind='contextMenu: {"asdf": clicked}, value: value' >
+                    <label for='txt1'>Right click on the input: </label>
+                    <input id='txt1' type='text'/>
+                </div>
+                <div>
+                    <label for='text3'>Bind it with left click</label>
+                    <input id='text3' type='text' data-bind='contextMenu: menu, value: value, bindMenuOnClick: true, bindMenuOnContextMenu: false'
+                    />
+                </div>
+            </div> -->
+        </article>
+        <%- include ../shared/footer.ejs %>
+</body>
+
+<%- include ../shared/footerInclude.ejs %>
+
+</html>

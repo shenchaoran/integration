@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Create integration solution</title>
+    <%- include ../shared/headerInclude.ejs %>
+        <style>
+            body {
+                display: flex;
+                flex-flow: column nowrap;
+            }
+            
+            body>section {
+                flex: 1;
+                width: 100%;
+            }
+        </style>
+
+        <script>
+            //        var url = location.href;
+            //        if(url.indexOf('integration/solution/detail') != -1){
+            //            $('#canvas-div').css('margin-left','350px');
+            //        }
+            //        else{
+            //            $('#canvas-div').css('margin-left','0px');
+            //        }
+
+            //        var sidebarBodys = $('.sidebar-body');
+            //        for(let i=0;i<sidebarBodys.length;i++){
+            //            let sidebarHeader = sidebarBodys[i].parent().find('.sidebar-header');
+            //            let headerHeight = sidebarHeader.height();
+            //            sidebarBodys[i].css('top',headerHeight);
+            //        }
+        </script>
+</head>
+
+<body class="left-side-collapsed">
+    <%- include ../shared/header.ejs %>
+        <section>
+            <div id="aggreDIV" class="main-content">
+                <div id="global-loading-div">
+                    <i class="fa fa-spinner fa-spin fa-3x fa-fw" aria-hidden="true" style="margin: 2px auto;"></i>
+                </div>
+                <!--<div class="header-section">-->
+                <!--<a class="toggle-btn"><i class="fa fa-bars"></i></a>-->
+                <!--</div>-->
+
+                <div id="wrapper" style="width: 100%;">
+                    <!-- region model node list -->
+                    <div class="sidebar" id="div-model-Node">
+                        <div class="sidebar-header">
+                            <h4>Add model service node</h4>
+                            <div class="add-div">
+                                <form style="padding: 10px;" class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="model-host" class="col-sm-2 control-label">Host</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" id="model-host" class="" placeholder="Host" name="host" required value="106.14.78.235">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="model-port" class="col-sm-2 control-label">Port</label>
+                                        <div class="col-sm-10">
+                                            <button type="submit" class="btn btn-default pull-right" id="submit-model-btn">Add</button>
+                                            <input type="text" id="model-port" class="" placeholder="Port" name="port" required style="width: 65px;" value="8060">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="sidebar-body">
+                            <div class="list-div" id="div-model-list">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="toggle-sidebar-btn" id="toggle-model-node-sidebar-btn" data-toggle="tooltip" data-placement="right" data-target="#div-model-Node" title="Add model service node">
+                        <i class="fa fa-chevron-left"></i>
+                    </div>
+                    <!--endregion-->
+
+                    <!-- region data node list -->
+                    <div class="sidebar myCollapsed" id="div-data-Node">
+                        <div class="sidebar-header">
+                            <h4>Add data service node</h4>
+                            <div class="add-div">
+                                <form style="padding: 10px;" class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="model-host" class="col-sm-2 control-label">Host</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" id="data-host" class="" placeholder="Host" name="host" required value="106.14.78.235">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="model-port" class="col-sm-2 control-label">Port</label>
+                                        <div class="col-sm-10">
+                                            <button type="submit" class="btn btn-default pull-right" id="submit-data-map-btn">Add</button>
+                                            <input type="text" id="data-port" class="" placeholder="Port" name="port" required style="width: 65px;" value="8899">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="sidebar-body">
+                            <div class="list-div" id="div-data-list">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="toggle-sidebar-btn" id="toggle-data-node-sidebar-btn" data-toggle="tooltip" data-placement="right" data-target="#div-data-Node" title="Add data service node">
+                        <i class="fa fa-chevron-right"></i>
+                    </div>
+                    <!--endregion-->
+
+                    <!-- region ms detail list -->
+                    <div class="sidebar myCollapsed" id="div-AggreMS">
+                        <div class="sidebar-header">
+                            <h4>Integration services list</h4>
+                        </div>
+                        <div class="sidebar-body">
+                            <div id="webix-AggreMS-list"></div>
+                        </div>
+                    </div>
+
+                    <div class="toggle-sidebar-btn" id="toggle-cart-sidebar-btn" data-toggle="tooltip" data-placement="right" data-target="#div-AggreMS" title="Integration services list">
+                        <i class="fa fa-chevron-right"></i>
+                    </div>
+                    <!--endregion-->
+
+                    <!-- region canvas -->
+                    <div class="" id="canvas-div">
+                        <%- include diagram-modeling.ejs %>
+                    </div>
+                    <!--endregion-->
+
+                </div>
+
+            </div>
+            <!-- region loading modal: get ms list -->
+            <div aria-hidden="true" tabIndex="-1" id='ms-cart-modal' class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" id="close-modal" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                            <h4 class="modal-title">
+                                Add model services to integration solution
+                            </h4>
+                        </div>
+                        <div id='ms-cart-modal-body' class="modal-body">
+                            <!--<div id="ms-tree-pager"></div>-->
+                            <div id="ms-tree"></div>
+                            <div id="ms-cart"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn-tt-submit btn btn-primary" disabled data-dismiss="modal">杝交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--endregion-->
+
+            <!--region save modal-->
+            <div aria-hidden="true" tabIndex="-1" id='save-aggre-solution-modal' class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" id="close-modal" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                            <h4 class="modal-title">
+                                Save this integration solution
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <form id="save-aggre-form" class="form-horizontal" role="form">
+                                <div class="form-group">
+                                    <label for="solutionName" class="col-sm-2 control-label">Solution Name</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="solutionName" placeholder="solution name" name="name" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="desc" class="col-sm-2 control-label">Description</label>
+                                    <div class="col-sm-10">
+                                        <textarea type="text" class="form-control" id="solutionDesc" placeholder="input the description of the solution" roles="3" name="desc" required></textarea>
+                                    </div>
+                                </div>
+                                <!-- <div class="form-group">
+                                    <label for="author" class="col-sm-2 control-label">Author</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="solutionAuthor" placeholder="please input your name" name="author" required>
+                                    </div>
+                                </div> -->
+                                <div id="loading-div" style="display: none;text-align: center;">
+                                    <i class="fa fa-spinner fa-spin fa-3x fa-fw" aria-hidden="true" style="margin: 2px auto;"></i>
+                                </div>
+                                <hr>
+                                <div class="form-group" style="">
+                                    <div class="col-sm-offset-2 col-sm-4">
+                                        <button type="submit" class="btn btn-primary" id="submit-form-btn">Save</button>
+                                    </div>
+                                    <div class="col-sm-offset-2 col-sm-4">
+                                        <button type="button" class="btn btn-default" id="cancle-form-btn" data-dismiss="modal">Cancle</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <!--<div class="modal-footer">-->
+                        <!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+                        <!--<button type="button" class="btn-tt-submit btn btn-primary" id="save-aggre-btn">Save</button>-->
+                        <!--</div>-->
+                    </div>
+                </div>
+            </div>
+            <!--endregion-->
+        </section>
+        
+    <%- include context-menu.ejs %>
+</body>
+<%- include ../shared/footerInclude.ejs %>
+
+</html>
