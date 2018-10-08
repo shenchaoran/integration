@@ -4,8 +4,7 @@
     "private": true,
     "scripts": {
         "start": "node app.js",
-        "grunt": "grunt --force",
-        "serve": "nodemon --inspect=0.0.0.0:24688 app.js"
+        "debug": "nodemon --inspect=0.0.0.0:24688 app.js"
     },
     "dependencies": {
         "bluebird": "^3.5.1",

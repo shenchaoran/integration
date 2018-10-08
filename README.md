@@ -1,3 +1,11 @@
+# install and start
+```
+npm i
+gulp
+npm run start
+```
+
+# preview
 [访问地址](http://106.14.78.235:6868/integration/solution)
 
 1. 添加资源

@@ -24,9 +24,9 @@ var gulp = require('gulp'),
 var cssSrc = 'public/src/css/*.scss',
     jsSrc = 'public/src/js/*.js',
     indexJS = 'public/src/js/index.js',
-    cssDist = 'public/dist/css',
+    cssDist = 'public/dist/css/custom',
     jsName = 'bundle.js',
-    jsDist = 'public/dist/js';
+    jsDist = 'public/dist/js/custom';
 
 gulp.task('css', () => {
     sass(cssSrc, {
@@ -75,38 +75,6 @@ gulp.task('js', () => {
                 date: new Date()
             }
         }));
-
-    // gulp.src(jsSrc)
-    //     .pipe(jshint('.jshintrc'))
-    //     .pipe(jshint.reporter(stylish))
-    //     .pipe(sourcemaps.init())
-    //     .pipe(() => {
-    //         var b = browserify(indexJS)
-    //             .bundle()
-    //             .pipe(source(jsName))
-    //             .pipe(buffer())
-    //             .pipe(gulp.dest(jsDist))
-    //         return b;
-    //     })
-    //     .pipe(sourcemaps.write('maps', {
-    //         includeContent: false,
-    //         sourceRoot: jsDist
-    //     }))
-    //     .pipe(gulp.dest(jsDist))
-    //     .pipe(rename({
-    //         suffix: '.min'
-    //     }))
-    //     .pipe(uglify())
-    //     .on('error', err => {
-    //         gutil.log(gutil.colors.red('[Error]'), err.toString())
-    //     })
-    //     .pipe(gulp.dest(jsDist))
-    //     .pipe(notify({
-    //         message: 'JS task complete: <%= file.relative %> @ <%= options.date %>',
-    //         templateOptions: {
-    //             date: new Date()
-    //         }
-    //     }));
 });
 
 gulp.task('clean', () => {
@@ -124,6 +92,6 @@ gulp.task('watch', () => {
         .on('change', livereload.changed);
 });
 
-gulp.task('default', ['clean'], () => {
+gulp.task('default', () => {
     gulp.start('watch')
 })

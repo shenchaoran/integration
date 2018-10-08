@@ -4,11 +4,10 @@
 /*jshint esversion: 6 */
 var ObjectID = require('bson-objectid');
 var io = require('socket.io-client');
-var qs = require('querystring');
 var xpath = require('xpath');
 var dom = require('xmldom').DOMParser;
 var _ = require('lodash');
- 
+
 var CanvasJS = (() => {
     // region private
     var __STATES_WIDTH = 115;
@@ -59,14 +58,14 @@ var CanvasJS = (() => {
 
     // 数据角色和状态
     const DataState = {
-        // unready: 'UNREADY',      // DataState表示的是已经上传过的数据的状态，没有 unready这一种
+        // unready: 'UNREADY',              // DataState表示的是已经上传过的数据的状态，没有 unready这一种
         ready: 'READY', // 准备好，表示初始状态，将要分发的状态，before dispatch
         pending: 'PENDING', // 正在传输 dispatching
         received: 'RECEIVED', // 计算节点接受成功 after dispatch
         failed: 'FAILED' // 计算节点接受失败 failed
-        // mid: 'MID',                 // 计算中间产物
-        // result: 'RESULT'            // 输出数据的状态，是最终计算结果数据（没有流向下个模型） is result
-        // used: 'USED'                // 模型已经跑完，使用过该数据 is used
+        // mid: 'MID',                      // 计算中间产物
+        // result: 'RESULT'                 // 输出数据的状态，是最终计算结果数据（没有流向下个模型） is result
+        // used: 'USED'                     // 模型已经跑完，使用过该数据 is used
     };
 
     const TaskState = {
@@ -595,7 +594,6 @@ var CanvasJS = (() => {
         __mode: 'view', // view edit configure
         __type: null,
 
-        // solution
         __solution: {
             layoutCfg: {
                 scene: null,
@@ -633,22 +631,10 @@ var CanvasJS = (() => {
 
         },
 
-
-        // canvas role 和 solution中的不一样！
+        // canvas object 和 solution 中的不一样！
         __nodeList: [],
         __linkList: [],
         __containerList: [],
-
-        // region deprecated 同一个数据存了两次（__task中）会导致内存混乱
-        // solutionCfg
-        // __serviceList: [],
-        // __relationList: [],
-        // taskCfg
-        // __dataList: [],                   // gdid MSID stateID eventName isInput TODO 接入数据服务时应该加上 host port 两个字段
-        // __inputDataList: [],
-        // endregion
-
-        // temp
         __currentNode: null,
         __isValid: true,
 
@@ -656,7 +642,7 @@ var CanvasJS = (() => {
             var self = this;
             this.__mode = mode;
             this.__type = type;
-            self.__initDomLayout();
+            self.__initDOMLayout();
             __wrapText();
 
             this.__stage = new JTopo.Stage($('#canvas')[0]);
@@ -695,7 +681,7 @@ var CanvasJS = (() => {
             };
         },
 
-        __initDomLayout: function () {
+        __initDOMLayout: function () {
             var url = location.href;
             // 获取 dom 元素左边界像素
             function getElementLeft(element) {
@@ -1091,7 +1077,7 @@ var CanvasJS = (() => {
             });
 
             $('#show-data-menu').on('click', function (e) {
-                self.__buildEventDetail();
+                self.__buildEventDialogDetail();
             });
 
             $('#remove-data-menu').on('click', function (e) {
@@ -1505,13 +1491,13 @@ var CanvasJS = (() => {
                 node.addEventListener('dbclick', function (e) {
                     __beginNode = null;
                     self.__currentNode = node;
-                    self.__buildEventDetail();
+                    self.__buildEventDialogDetail();
                 });
             } else if (type == 'STATES') {
                 node.addEventListener('dbclick', function (e) {
                     __beginNode = null;
                     self.__currentNode = node;
-                    self.__buildStatesDetail();
+                    self.__buildStatesDialogDetail();
                 });
             }
             // endregion
@@ -1622,67 +1608,6 @@ var CanvasJS = (() => {
             // endregion
         },
 
-        __setUser: function () {
-            let self = this;
-            let jwt = localStorage.getItem('jwt');
-            let user = localStorage.getItem('user');
-            if (user && jwt) {
-                user = JSON.parse(user);
-                jwt = JSON.parse(jwt);
-                if (jwt.expires > Date.now()) {
-                    self.__user = user;
-                    return true;
-                } else {
-                    $('#signin-a').click();
-                    return false;
-                }
-            } else {
-                $('#signin-a').click();
-                return false;
-            }
-        },
-
-        __setAuthor: function () {
-            let self = this;
-            let authors = _.get(self, '__solution.solutionInfo.author');
-            $('#solution-author').empty();
-            _.map(authors, author => {
-                let user;
-                if (author.avatar) {
-                    user = `<span class="avatar" title="${author.username}" data-toggle='tooltip'>` +
-                        `<img src="data:image/png;base64,${author.avatar}">` +
-                        `</span>`
-                } else if (author.username) {
-                    user = `<span class="avatar" title="${author.username}" data-toggle='tooltip'>` +
-                        author.username +
-                        `</span>`
-                } else {
-                    user = '';
-                }
-
-                $('#solution-author').append(user)
-            });
-
-            authors = _.get(self, '__task.taskInfo.author');
-            $('#task-author').empty();
-            _.map(authors, author => {
-                let user;
-                if (author.avatar) {
-                    user = `<span class="avatar" title="${author.username}" data-toggle='tooltip'>` +
-                        `<img src="data:image/png;base64,${author.avatar}">` +
-                        `</span>`
-                } else if (author.username) {
-                    user = `<span class="avatar" title="${author.username}" data-toggle='tooltip'>` +
-                        author.username +
-                        `</span>`
-                } else {
-                    user = '';
-                }
-
-                $('#task-author').append(user)
-            });
-        },
-
         __bindSaveSolutionEvent: function (isSaveAs) {
             var self = this;
 
@@ -1760,8 +1685,7 @@ var CanvasJS = (() => {
                                     time: 2000
                                 });
 
-                                window.location =
-                                    '/integration/solution/edit?_id=' + res._id;
+                                window.location = '/integration/solution/edit?_id=' + res._id;
                             }
                         })
                         .fail(function (err) {
@@ -1769,9 +1693,7 @@ var CanvasJS = (() => {
                             $('#submit-form-btn').attr('disabled', false);
                             $.gritter.add({
                                 title: 'Warning:',
-                                text: 'Save solution failed!<br><pre>' +
-                                    JSON.stringify(err, null, 4) +
-                                    '</pre>',
+                                text: `Save solution failed!<br><pre>${JSON.stringify(err, null, 4)}</pre>`,
                                 sticky: false,
                                 time: 2000
                             });
@@ -1856,12 +1778,8 @@ var CanvasJS = (() => {
                                 if (isRunNow) {
                                     return self.run();
                                 }
-                                if (
-                                    window.location.pathname ==
-                                    '/integration/task/new'
-                                ) {
-                                    window.location.href =
-                                        '/integration/task/edit?_id=' + res._id;
+                                if (window.location.pathname == '/integration/task/new') {
+                                    window.location.href = '/integration/task/edit?_id=' + res._id;
                                 }
                                 if (isSaveAs) {
                                     window.location.search = '?_id=' + res._id;
@@ -1885,29 +1803,101 @@ var CanvasJS = (() => {
         },
         // endregion
 
-        // region add remove role
+        // region user
+        __setUser: function () {
+            let self = this;
+            let jwt = localStorage.getItem('jwt');
+            let user = localStorage.getItem('user');
+            if (user && jwt) {
+                user = JSON.parse(user);
+                jwt = JSON.parse(jwt);
+                if (jwt.expires > Date.now()) {
+                    self.__user = user;
+                    return true;
+                } else {
+                    $('#signin-a').click();
+                    return false;
+                }
+            } else {
+                $('#signin-a').click();
+                return false;
+            }
+        },
 
-        // 两种node，附加信息有：
-        // {
-        //     __nodeType:'STATES',
-        //     __MSID:String,
-        //     __containerID:String
-        //     __state                  // 应该放在msstate中，这里是临时属性，不会存在solution中
-        //     __pause                  // 放在msstate中
-        //     __serviceType
-        //     __callType               // data map type: src2udx/udx2src
-        // }
-        // {
-        //     __nodeType:'INPUT',      // 'OUTPUT' 'CONTROL'
-        //     __MSID:String,
-        //     __stateID:String,
-        //     __eventName:String
-        //     __gdid                   // 放在 dataList 中
-        //     __isInput:Boolean        // 当上传数据了，才为true
-        //     __eventType
-        //     __serviceType
-        // }
-        // 创建时只添加jTopo自带的属性，额外属性在调用端添加
+        __setAuthor: function () {
+            let self = this;
+            let authors = _.get(self, '__solution.solutionInfo.author');
+            $('#solution-author').empty();
+            _.map(authors, author => {
+                let user;
+                if (author.avatar) {
+                    user = `
+                        <span class="avatar" title="${author.username}" data-toggle='tooltip'>
+                            <img src="data:image/png;base64,${author.avatar}">
+                        </span>
+                    `
+                } else if (author.username) {
+                    user = `
+                        <span class="avatar" title="${author.username}" data-toggle='tooltip'>
+                            ${author.username}
+                        </span>
+                    `
+                } else {
+                    user = '';
+                }
+
+                $('#solution-author').append(user)
+            });
+
+            authors = _.get(self, '__task.taskInfo.author');
+            $('#task-author').empty();
+            _.map(authors, author => {
+                let user;
+                if (author.avatar) {
+                    user = `
+                        <span class="avatar" title="${author.username}" data-toggle='tooltip'>
+                            <img src="data:image/png;base64,${author.avatar}">
+                        </span>
+                    `
+                } else if (author.username) {
+                    user = `
+                        <span class="avatar" title="${author.username}" data-toggle='tooltip'>
+                            ${author.username}
+                        </span>
+                    `
+                } else {
+                    user = '';
+                }
+
+                $('#task-author').append(user)
+            });
+        },
+        // endregion
+
+        // region find/add/delete canvas object operation
+
+        /* 两种node，附加信息有：
+         * {
+         *     __nodeType:'STATES',
+         *     __MSID:String,
+         *     __containerID:String
+         *     __state                  // 应该放在msstate中，这里是临时属性，不会存在solution中
+         *     __pause                  // 放在msstate中
+         *     __serviceType
+         *     __callType               // data map type: src2udx/udx2src
+         * }
+         * {
+         *     __nodeType:'INPUT',      // 'OUTPUT' 'CONTROL'
+         *     __MSID:String,
+         *     __stateID:String,
+         *     __eventName:String
+         *     __gdid                   // 放在 dataList 中
+         *     __isInput:Boolean        // 当上传数据了，才为true
+         *     __eventType
+         *     __serviceType
+         * }
+         *  创建时只添加jTopo自带的属性，额外属性在调用端添加
+         */
         __addJTopoNode: function (x, y, text, type, scale, optional) {
             var node = null;
             var linkScale = scale == 1 ? 1 : 2 - scale;
@@ -2198,9 +2188,85 @@ var CanvasJS = (() => {
             this.__scene.add(role);
         },
 
+        // 用于删除自定义的线
+        __removeJTopoElementByID: function (scene, _id) {
+            if (scene.childs.length == 0) return -1;
+            for (var i = 0; i < scene.childs.length; i++) {
+                if (scene.childs[i]._id == _id) {
+                    scene.remove(scene.childs[i]);
+                    return 1;
+                }
+            }
+            return 0;
+        },
+
+        // remove container and childs
+        __removeJTopoContainer: function (scene, containerNode) {
+            for (var j = 0; j < containerNode.childs.length; j++) {
+                if (containerNode.childs[j].elementType == 'node')
+                    scene.remove(containerNode.childs[j]);
+            }
+            scene.remove(containerNode);
+        },
+
+        removeRelationByJTopoID: function (scene, id) {
+            for (var i = 0; i < scene.childs.length; i++) {
+                if (scene.childs[i]._id == id) {
+                    var link = scene.childs[i];
+                    var relationID =
+                        link.nodeA.__MSID + '__' + link.nodeZ.__MSID;
+                    var relationList = this.__solution.solutionCfg.relationList;
+                    for (var j = 0; j < relationList.length; j++) {
+                        if (relationList[j]._id == relationID) {
+                            relationList.splice(j, 1);
+                            return;
+                        }
+                    }
+                    break;
+                }
+            }
+        },
+
+        removeRelationByMSID: function (MSID) {
+            var relationList = this.__solution.solutionCfg.relationList;
+            for (var j = 0; j < relationList.length; j++) {
+                var relation = relationList[j];
+                if (relation.from.MSID == MSID || relation.to.MSID == MSID) {
+                    relationList.splice(j, 1);
+                }
+            }
+        },
+
+        // 不支持container元素
+        __getJTopoElementByID: function (scene, _id) {
+            var roleList = scene.childs;
+            if (roleList.length == 0) return null;
+            for (var i = 0; i < roleList.length; i++) {
+                if (
+                    roleList[i]._id == _id &&
+                    roleList[i].elementType != 'container'
+                ) {
+                    return roleList[i];
+                }
+            }
+            return null;
+        },
+
+        __getServiceByID: function (id) {
+            var serviceList = this.__solution.solutionCfg.serviceList;
+            for (var i = 0; i < serviceList.length; i++) {
+                if (serviceList[i]._id == id) {
+                    return serviceList[i];
+                }
+            }
+            return null;
+        },
+        // endregion
+
+        // region dobule click dialog
         // TODO 数据不一定必须要上传，也有可能是以服务的形式接入进来
         // 上传数据，会添加到 __dataList 中
-        __buildEventDetail: function () {
+        __buildEventDialogDetail: function () {
             var node = this.__currentNode;
             var self = this;
             var type = node.__nodeType;
@@ -2240,26 +2306,17 @@ var CanvasJS = (() => {
                             </div>`
                         ).appendTo($('#' + id));
 
-                        $('#' + id + '-visualization-data').on(
-                            'click',
-                            function () {
-                                if (
-                                    self.__task._id == null ||
-                                    self.__task._id == undefined
-                                ) {
-                                    $('#save-aggre-task-modal').modal('show');
-                                } else {
-                                    window.open(dataVisualizationURL);
-                                }
+                        $(`#${id}-visualization-data`).on('click', () => {
+                            if (!self.__task._id) {
+                                $('#save-aggre-task-modal').modal('show');
+                            } else {
+                                window.open(dataVisualizationURL);
                             }
-                        );
+                        });
 
-                        $('#' + id + '-download-data').on('click', function () {
+                        $(`#${id}-download-data`).on('click', () => {
                             // 必须先保存task才能下载
-                            if (
-                                self.__task._id == null ||
-                                self.__task._id == undefined
-                            ) {
+                            if (!self.__task._id) {
                                 $('#save-aggre-task-modal').modal('show');
                             } else {
                                 if (dataDownloadURL) {
@@ -2333,25 +2390,15 @@ var CanvasJS = (() => {
                         schemaStr = '';
                     }
 
-                    $dataInfoDialog = $(
-                        '<div id="' +
-                        id +
-                        '" class="data-info-dialog" title="Data Information">' +
-                        '<p><b>Name: </b><span>' +
-                        eventName +
-                        '</span></p>' +
-                        '<p><b>Type: </b><span>' +
-                        eventType +
-                        '</span></p>' +
-                        '<p><b>Description: </b><span>' +
-                        eventDesc +
-                        '</span></p>' +
-                        '<p><b>Optional: </b><span>' +
-                        optional +
-                        '</span></p>' +
-                        schemaStr +
-                        '</div>'
-                    );
+                    $dataInfoDialog = $(`
+                        <div id="${id}" class="data-info-dialog" title="Data Information">
+                            <p><b>Name: </b><span>${eventName}</span></p>
+                            <p><b>Type: </b><span>${eventType}</span></p>
+                            <p><b>Description: </b><span>${eventDesc}</span></p>
+                            <p><b>Optional: </b><span>${optional}</span></p>
+                            ${schemaStr}
+                        </div>
+                    `);
                 }
                 // endregion
 
@@ -2363,9 +2410,7 @@ var CanvasJS = (() => {
                         $(this).css('maxHeight', 500);
                     }
                 });
-                $('#' + id)
-                    .parent()
-                    .addClass('dataInfo-ui-dialog');
+                $('#' + id).parent().addClass('dataInfo-ui-dialog');
 
                 if (this.__mode == 'configure') {
                     // 如果模型状态是 unready 或者 pause，才允许上传数据
@@ -2403,7 +2448,6 @@ var CanvasJS = (() => {
                                     <p><b>Select data: </b></p>
                                     <span class='select-data-input-group'>
                                         <div tabindex='2' id='${id}-upload-data-input' type='text'></div>
-                                        
                                         <span>
                                             <span tabindex="500" id='${id}-delete' title="Clear selected files" style='display: none;margin-right: -5px; border-radius: 0; border-left: none;' class="btn btn-default fileinput-remove fileinput-remove-button">
                                                 <i class="glyphicon glyphicon-trash"></i>
@@ -2667,18 +2711,14 @@ var CanvasJS = (() => {
             addDownBtn();
         },
 
-        __buildStatesDetail: function () {
+        __buildStatesDialogDetail: function () {
             var node = this.__currentNode;
             var self = this;
             var type = node.__nodeType;
             var id = node.__MSID + '-states-dialog';
             if ($('#' + id).length) {
-                $('#' + id)
-                    .parent()
-                    .show();
-                $('#' + id)
-                    .parent()
-                    .css('z-index', __getMaxZIndex() + 1);
+                $('#' + id).parent().show();
+                $('#' + id).parent().css('z-index', __getMaxZIndex() + 1);
             } else {
                 var serviceDetail = __getServiceDetail(
                     node.__serviceType,
@@ -2883,550 +2923,475 @@ var CanvasJS = (() => {
                 });
             }
         },
-
-        // 用于删除自定义的线
-        __removeJTopoElementByID: function (scene, _id) {
-            if (scene.childs.length == 0) return -1;
-            for (var i = 0; i < scene.childs.length; i++) {
-                if (scene.childs[i]._id == _id) {
-                    scene.remove(scene.childs[i]);
-                    return 1;
-                }
-            }
-            return 0;
-        },
-
-        // remove container and childs
-        __removeJTopoContainer: function (scene, containerNode) {
-            for (var j = 0; j < containerNode.childs.length; j++) {
-                if (containerNode.childs[j].elementType == 'node')
-                    scene.remove(containerNode.childs[j]);
-            }
-            scene.remove(containerNode);
-        },
-
-        removeRelationByJTopoID: function (scene, id) {
-            for (var i = 0; i < scene.childs.length; i++) {
-                if (scene.childs[i]._id == id) {
-                    var link = scene.childs[i];
-                    var relationID =
-                        link.nodeA.__MSID + '__' + link.nodeZ.__MSID;
-                    var relationList = this.__solution.solutionCfg.relationList;
-                    for (var j = 0; j < relationList.length; j++) {
-                        if (relationList[j]._id == relationID) {
-                            relationList.splice(j, 1);
-                            return;
-                        }
-                    }
-                    break;
-                }
-            }
-        },
-
-        removeRelationByMSID: function (MSID) {
-            var relationList = this.__solution.solutionCfg.relationList;
-            for (var j = 0; j < relationList.length; j++) {
-                var relation = relationList[j];
-                if (relation.from.MSID == MSID || relation.to.MSID == MSID) {
-                    relationList.splice(j, 1);
-                }
-            }
-        },
-
-        // 不支持container元素
-        __getJTopoElementByID: function (scene, _id) {
-            var roleList = scene.childs;
-            if (roleList.length == 0) return null;
-            for (var i = 0; i < roleList.length; i++) {
-                if (
-                    roleList[i]._id == _id &&
-                    roleList[i].elementType != 'container'
-                ) {
-                    return roleList[i];
-                }
-            }
-            return null;
-        },
-
-        __getServiceByID: function (id) {
-            var serviceList = this.__solution.solutionCfg.serviceList;
-            for (var i = 0; i < serviceList.length; i++) {
-                if (serviceList[i]._id == id) {
-                    return serviceList[i];
-                }
-            }
-            return null;
-        },
         // endregion
 
-        // region add service role
-
-        // {
-        //     _id: ObjectId,
-        //     host:String,
-        //     port:String,
-        //     MS:Object,
-        //     MDL:Object
-        // }
-        __addModelService: function (SADLService) {
-            if (SADLService.id) delete SADLService.id;
-            var self = this;
-            //暂时只有一个state
-
-            // var stateID = null;
-            // var states = SADLService.MDL.ModelClass.Behavior.StateGroup.States.State;
-            // if(states instanceof Array){
-            //
-            // }
-            // else{
-            //     states = [states];
-            // }
-            // stateID = states[0]._$.id;
-
-            var event = __getEventsFromMDL(SADLService.MDL);
-            var eventCount = event.length;
-            var scale = eventCount <= 4 ? 1 : Math.pow(0.99, eventCount);
-            var linkScale = scale === 1 ? 1 : 2 - scale;
-            var canvasW = $('#canvas-div').width() / 2;
-            var canvasH = $('#canvas-div').height() / 2;
-
-            var container = this.__addJTopoContainer();
-            var stateNodeX =
-                (window.event.layerX - canvasW) / this.__scene.scaleX -
-                this.__scene.translateX +
-                canvasW;
-            var stateNodeY =
-                (window.event.layerY - canvasH) / this.__scene.scaleY -
-                this.__scene.translateY +
-                canvasH;
-            var stateNode = this.__addJTopoNode(
-                stateNodeX,
-                stateNodeY,
-                SADLService.MS.ms_model.m_name,
-                'STATES',
-                scale
-            );
-            // 有可能会出现一个服务使用多次的情况，所以_id得在前台生成
-            var __service = JSON.parse(JSON.stringify(SADLService));
-            __service._id = ObjectID().str;
-            this.__solution.solutionCfg.serviceList.push(__service);
-
-            stateNode.__MSID = __service._id;
-            stateNode.__nodeType = 'STATES';
-            stateNode.__containerID = container._id;
-            stateNode.__serviceType = 'model';
-
-            this.__task.MSState.push({
-                state: MSState.unready,
-                MSID: __service._id,
-                host: __service.host,
-                port: __service.port,
-                serviceType: __service.serviceType
-            });
-            this.__bindNodeEvent(stateNode);
-            container.add(stateNode);
-
-            var inputCount = 0;
-            var outputCount = 0;
-            var controlCount = 0;
-            for (var j = 0; j < eventCount; j++) {
-                if (typeof event[j].ResponseParameter !== 'undefined') {
-                    inputCount++;
-                } else if (typeof event[j].DispatchParameter !== 'undefined') {
-                    outputCount++;
-                } else if (typeof event[j].ControlParameter !== 'undefined') {
-                    controlCount++;
-                }
-            }
-            var dx = __DATA_RADIUS * 4.5 * linkScale * this.__scene.scaleX;
-            var dy = __DATA_RADIUS * 2.5 * linkScale * this.__scene.scaleY;
-            var k = 0;
-            for (var i = 0; i < eventCount; i++) {
-                var nodeA = null;
-                var x = null;
-                var y = null;
-                var type = null;
-                var link = null;
-                if (typeof event[i].DispatchParameter !== 'undefined') {
-                    type = 'OUTPUT';
-                } else {
-                    x =
-                        (window.event.layerX - dx - canvasW) /
-                        this.__scene.scaleX -
-                        this.__scene.translateX +
-                        canvasW;
-                    y =
-                        (window.event.layerY -
-                            ((inputCount + controlCount - 1) / 2 - k) * dy -
-                            canvasH) /
-                        this.__scene.scaleY -
-                        this.__scene.translateY +
-                        canvasH;
-                    if (typeof event[i].ResponseParameter !== 'undefined') {
-                        type = 'INPUT';
-                    } else if (
-                        typeof event[i].ControlParameter !== 'undefined'
-                    ) {
-                        type = 'CONTROL';
-                    }
-                    k++;
-                }
-                var optional = event[i]._$.optional;
-                optional = __isTrue(optional);
-                nodeA = this.__addJTopoNode(
-                    x,
-                    y,
-                    event[i]._$.name,
-                    type,
-                    scale,
-                    optional
-                );
-                nodeA.__nodeType = type;
-                nodeA.__MSID = __service._id;
-                nodeA.__stateID = event[i].stateID;
-                nodeA.__eventName = event[i]._$.name;
-                nodeA.__optional = optional;
-                nodeA.__serviceType = 'model';
-                this.__bindNodeEvent(nodeA);
-                container.add(nodeA);
-
-                if (typeof event[i].DispatchParameter !== 'undefined') {
-                    link = this.__addJTopoLink(stateNode, nodeA);
-                    link.__linkType = 'OUT';
-                } else {
-                    link = this.__addJTopoLink(nodeA, stateNode);
-                    link.__linkType = 'IN';
-                }
-            }
-            JTopo.layout.layoutNode(this.__scene, stateNode, true);
-        },
-
-        // 增加调用描述语言CDL
-        __convert2SADLService: function (service) {
-            var SADLService = null;
-            if (service.serviceType == 'model') {
-                SADLService = service;
-            } else if (service.serviceType == 'data map') {
-                SADLService = {
-                    _id: ObjectID().str,
-                    host: service.host,
-                    port: service.port,
-                    serviceType: service.serviceType,
-                    DS: {
-                        _id: service._id,
-                        name: service.name,
-                        description: service.description,
-                        uname: service.uname,
-                        uemail: service.uemail,
-                        author: service.author,
-                        datetime: service.datetime,
-                        // snapshot: service.snapshot,
-                        available: service.available,
-                        details: service.details,
-                        uid: service.uid,
-                        associate: service.associate,
-                        delete: service.delete,
-                        deletetime: service.deletetime
-                    },
-                    CDL: {
-                        SchemaGroup: [],
-                        StateGroup: {
-                            StateTransitions: {},
-                            States: [{
-                                id: 'data map state',
-                                name: 'Default',
-                                type: 'basic',
-                                description: '',
-                                Events: [{
-                                        type: 'in',
-                                        name: 'Source',
-                                        description: 'input data',
-                                        optional: 0,
-                                        datasetReference: ''
-                                    },
-                                    {
-                                        type: 'out',
-                                        name: 'UDX',
-                                        description: 'output data',
-                                        optional: 0,
-                                        datasetReference: ''
-                                    }
-                                ]
-                            }]
-                        }
-                    }
-                };
-            } else if (service.serviceType == 'data refactor') {
-                SADLService = {
-                    _id: ObjectID().str,
-                    host: service.host,
-                    port: service.port,
-                    serviceType: service.serviceType,
-                    DS: {
-                        _id: service.refactorId,
-                        method: service.name,
-                        name: service.method.$.name,
-                        class: service.method.$.class,
-                        description: service.method.$.description
-                    },
-                    CDL: {
-                        SchemaGroup: [],
-                        StateGroup: {
-                            StateTransitions: {},
-                            States: [{
-                                id: 'data refactor state',
-                                name: 'Default',
-                                type: 'basic',
-                                description: '',
-                                Events: _.map(service.method.Params, event => {
-                                    return {
-                                        type: event.$.type,
-                                        description: event.$.description,
-                                        name: event.$.name,
-                                        optional: 0,
-                                        datasetReference: event.$.schema
-                                    };
-                                })
-                            }]
-                        }
-                    }
-                };
-            }
-            return SADLService;
-        },
-
-        // _id, host, port, DS, CDL, serviceType
-        __addDataMapService: function (service) {
-            var self = this;
-
-            service.callType = 'src2udx';
-            this.__solution.solutionCfg.serviceList.push(service);
-            this.__task.MSState.push({
-                state: MSState.unready,
-                MSID: service._id,
-                host: service.host,
-                port: service.port,
-                serviceType: service.serviceType
-            });
-
-            var scale = 1;
-            var linkScale = 1;
-            var canvasW = $('#canvas-div').width() / 2;
-            var canvasH = $('#canvas-div').height() / 2;
-
-            var container = this.__addJTopoContainer();
-            var stateNodeX =
-                (window.event.layerX - canvasW) / this.__scene.scaleX -
-                this.__scene.translateX +
-                canvasW;
-            var stateNodeY =
-                (window.event.layerY - canvasH) / this.__scene.scaleY -
-                this.__scene.translateY +
-                canvasH;
-            var serviceName = service.DS.name;
-            var stateNode = this.__addJTopoNode(
-                stateNodeX,
-                stateNodeY,
-                serviceName,
-                'STATES',
-                scale
-            );
-            // 有可能会出现一个服务使用多次的情况，所以_id得在前台生成
-
-            stateNode.__MSID = service._id;
-            stateNode.__nodeType = 'STATES';
-            stateNode.__containerID = container._id;
-            stateNode.__serviceType = service.serviceType;
-            stateNode.__callType = 'src2udx';
-
-            this.__bindNodeEvent(stateNode);
-            container.add(stateNode);
-
-            var inputCount = 1;
-            var outputCount = 1;
-            var controlCount = 0;
-            var dx = __DATA_RADIUS * 4.5 * linkScale * this.__scene.scaleX;
-            var dy = __DATA_RADIUS * 2.5 * linkScale * this.__scene.scaleY;
-            var k = 0;
-
-            var state = service.CDL.StateGroup.States[0];
-            var event = state.Events;
-
-            for (var i = 0; i < event.length; i++) {
-                var nodeA = null;
-                var x = null;
-                var y = null;
-                var type = null;
-                var link = null;
-                if (event[i].type == 'out') {
-                    type = 'OUTPUT';
-                } else {
-                    x =
-                        (window.event.layerX - dx - canvasW) /
-                        this.__scene.scaleX -
-                        this.__scene.translateX +
-                        canvasW;
-                    y =
-                        (window.event.layerY -
-                            ((inputCount + controlCount - 1) / 2 - k) * dy -
-                            canvasH) /
-                        this.__scene.scaleY -
-                        this.__scene.translateY +
-                        canvasH;
-                    type = 'INPUT';
-                }
-                var optional = event[i].optional;
-                optional =
-                    optional == '0' || optional == 0 || optional == false ?
-                    false :
-                    true;
-                nodeA = this.__addJTopoNode(
-                    x,
-                    y,
-                    event[i].name,
-                    type,
-                    scale,
-                    optional
-                );
-                nodeA.__nodeType = type;
-                nodeA.__MSID = service._id;
-                nodeA.__stateID = state.id;
-                nodeA.__eventName = event[i].name;
-                nodeA.__optional = optional;
-                nodeA.__serviceType = service.serviceType;
-                this.__bindNodeEvent(nodeA);
-                container.add(nodeA);
-
-                if (event[i].type == 'out') {
-                    link = this.__addJTopoLink(stateNode, nodeA);
-                    link.__linkType = 'OUT';
-                } else {
-                    link = this.__addJTopoLink(nodeA, stateNode);
-                    link.__linkType = 'IN';
-                }
-            }
-            JTopo.layout.layoutNode(this.__scene, stateNode, true);
-        },
-
-        __addDataRefactorService: function (service) {
-            var self = this;
-
-            this.__solution.solutionCfg.serviceList.push(service);
-            this.__task.MSState.push({
-                state: MSState.unready,
-                MSID: service._id,
-                host: service.host,
-                port: service.port,
-                serviceType: service.serviceType
-            });
-
-            var scale = 1;
-            var linkScale = 1;
-            var canvasW = $('#canvas-div').width() / 2;
-            var canvasH = $('#canvas-div').height() / 2;
-
-            var container = this.__addJTopoContainer();
-            var stateNodeX =
-                (window.event.layerX - canvasW) / this.__scene.scaleX -
-                this.__scene.translateX +
-                canvasW;
-            var stateNodeY =
-                (window.event.layerY - canvasH) / this.__scene.scaleY -
-                this.__scene.translateY +
-                canvasH;
-            var serviceName = service.DS.name;
-            var stateNode = this.__addJTopoNode(
-                stateNodeX,
-                stateNodeY,
-                serviceName,
-                'STATES',
-                scale
-            );
-            // 有可能会出现一个服务使用多次的情况，所以_id得在前台生成
-
-            stateNode.__MSID = service._id;
-            stateNode.__nodeType = 'STATES';
-            stateNode.__containerID = container._id;
-            stateNode.__serviceType = service.serviceType;
-
-            this.__bindNodeEvent(stateNode);
-            container.add(stateNode);
-
-            var inputCount = 1;
-            var outputCount = 1;
-            var controlCount = 0;
-            var dx = __DATA_RADIUS * 4.5 * linkScale * this.__scene.scaleX;
-            var dy = __DATA_RADIUS * 2.5 * linkScale * this.__scene.scaleY;
-            var k = 0;
-
-            var state = service.CDL.StateGroup.States[0];
-            var event = state.Events;
-
-            for (var i = 0; i < event.length; i++) {
-                var nodeA = null;
-                var x = null;
-                var y = null;
-                var type = null;
-                var link = null;
-                if (event[i].type == 'out') {
-                    type = 'OUTPUT';
-                } else {
-                    x =
-                        (window.event.layerX - dx - canvasW) /
-                        this.__scene.scaleX -
-                        this.__scene.translateX +
-                        canvasW;
-                    y =
-                        (window.event.layerY -
-                            ((inputCount + controlCount - 1) / 2 - k) * dy -
-                            canvasH) /
-                        this.__scene.scaleY -
-                        this.__scene.translateY +
-                        canvasH;
-                    type = 'INPUT';
-                }
-                var optional = event[i].optional;
-                optional =
-                    optional == '0' || optional == 0 || optional == false ?
-                    false :
-                    true;
-                nodeA = this.__addJTopoNode(
-                    x,
-                    y,
-                    event[i].name,
-                    type,
-                    scale,
-                    optional
-                );
-                nodeA.__nodeType = type;
-                nodeA.__MSID = service._id;
-                nodeA.__stateID = state.id;
-                nodeA.__eventName = event[i].name;
-                nodeA.__optional = optional;
-                nodeA.__serviceType = service.serviceType;
-                this.__bindNodeEvent(nodeA);
-                container.add(nodeA);
-
-                if (event[i].type == 'out') {
-                    link = this.__addJTopoLink(stateNode, nodeA);
-                    link.__linkType = 'OUT';
-                } else {
-                    link = this.__addJTopoLink(nodeA, stateNode);
-                    link.__linkType = 'IN';
-                }
-            }
-            JTopo.layout.layoutNode(this.__scene, stateNode, true);
-        },
-
+        // region add/delete service role
         addServiceRole: function (service) {
+            // 增加调用描述语言CDL
+            let __convert2SADLService = (service) => {
+                var SADLService = null;
+                if (service.serviceType == 'model') {
+                    SADLService = service;
+                } else if (service.serviceType == 'data map') {
+                    SADLService = {
+                        _id: ObjectID().str,
+                        host: service.host,
+                        port: service.port,
+                        serviceType: service.serviceType,
+                        DS: {
+                            _id: service._id,
+                            name: service.name,
+                            description: service.description,
+                            uname: service.uname,
+                            uemail: service.uemail,
+                            author: service.author,
+                            datetime: service.datetime,
+                            // snapshot: service.snapshot,
+                            available: service.available,
+                            details: service.details,
+                            uid: service.uid,
+                            associate: service.associate,
+                            delete: service.delete,
+                            deletetime: service.deletetime
+                        },
+                        CDL: {
+                            SchemaGroup: [],
+                            StateGroup: {
+                                StateTransitions: {},
+                                States: [{
+                                    id: 'data map state',
+                                    name: 'Default',
+                                    type: 'basic',
+                                    description: '',
+                                    Events: [{
+                                            type: 'in',
+                                            name: 'Source',
+                                            description: 'input data',
+                                            optional: 0,
+                                            datasetReference: ''
+                                        },
+                                        {
+                                            type: 'out',
+                                            name: 'UDX',
+                                            description: 'output data',
+                                            optional: 0,
+                                            datasetReference: ''
+                                        }
+                                    ]
+                                }]
+                            }
+                        }
+                    };
+                } else if (service.serviceType == 'data refactor') {
+                    SADLService = {
+                        _id: ObjectID().str,
+                        host: service.host,
+                        port: service.port,
+                        serviceType: service.serviceType,
+                        DS: {
+                            _id: service.refactorId,
+                            method: service.name,
+                            name: service.method.$.name,
+                            class: service.method.$.class,
+                            description: service.method.$.description
+                        },
+                        CDL: {
+                            SchemaGroup: [],
+                            StateGroup: {
+                                StateTransitions: {},
+                                States: [{
+                                    id: 'data refactor state',
+                                    name: 'Default',
+                                    type: 'basic',
+                                    description: '',
+                                    Events: _.map(service.method.Params, event => {
+                                        return {
+                                            type: event.$.type,
+                                            description: event.$.description,
+                                            name: event.$.name,
+                                            optional: 0,
+                                            datasetReference: event.$.schema
+                                        };
+                                    })
+                                }]
+                            }
+                        }
+                    };
+                }
+                return SADLService;
+            }
+
+            // {
+            //     _id: ObjectId,
+            //     host:String,
+            //     port:String,
+            //     MS:Object,
+            //     MDL:Object
+            // }
+            let __addModelService = (SADLService) => {
+                if (SADLService.id) delete SADLService.id;
+                var self = this;
+                //暂时只有一个state
+
+                // var stateID = null;
+                // var states = SADLService.MDL.ModelClass.Behavior.StateGroup.States.State;
+                // if(states instanceof Array){
+                //
+                // }
+                // else{
+                //     states = [states];
+                // }
+                // stateID = states[0]._$.id;
+
+                var event = __getEventsFromMDL(SADLService.MDL);
+                var eventCount = event.length;
+                var scale = eventCount <= 4 ? 1 : Math.pow(0.99, eventCount);
+                var linkScale = scale === 1 ? 1 : 2 - scale;
+                var canvasW = $('#canvas-div').width() / 2;
+                var canvasH = $('#canvas-div').height() / 2;
+
+                var container = this.__addJTopoContainer();
+                var stateNodeX =
+                    (window.event.layerX - canvasW) / this.__scene.scaleX -
+                    this.__scene.translateX +
+                    canvasW;
+                var stateNodeY =
+                    (window.event.layerY - canvasH) / this.__scene.scaleY -
+                    this.__scene.translateY +
+                    canvasH;
+                var stateNode = this.__addJTopoNode(
+                    stateNodeX,
+                    stateNodeY,
+                    SADLService.MS.ms_model.m_name,
+                    'STATES',
+                    scale
+                );
+                // 有可能会出现一个服务使用多次的情况，所以_id得在前台生成
+                var __service = JSON.parse(JSON.stringify(SADLService));
+                __service._id = ObjectID().str;
+                this.__solution.solutionCfg.serviceList.push(__service);
+
+                stateNode.__MSID = __service._id;
+                stateNode.__nodeType = 'STATES';
+                stateNode.__containerID = container._id;
+                stateNode.__serviceType = 'model';
+
+                this.__task.MSState.push({
+                    state: MSState.unready,
+                    MSID: __service._id,
+                    host: __service.host,
+                    port: __service.port,
+                    serviceType: __service.serviceType
+                });
+                this.__bindNodeEvent(stateNode);
+                container.add(stateNode);
+
+                var inputCount = 0;
+                var outputCount = 0;
+                var controlCount = 0;
+                for (var j = 0; j < eventCount; j++) {
+                    if (typeof event[j].ResponseParameter !== 'undefined') {
+                        inputCount++;
+                    } else if (typeof event[j].DispatchParameter !== 'undefined') {
+                        outputCount++;
+                    } else if (typeof event[j].ControlParameter !== 'undefined') {
+                        controlCount++;
+                    }
+                }
+                var dx = __DATA_RADIUS * 4.5 * linkScale * this.__scene.scaleX;
+                var dy = __DATA_RADIUS * 2.5 * linkScale * this.__scene.scaleY;
+                var k = 0;
+                for (var i = 0; i < eventCount; i++) {
+                    var nodeA = null;
+                    var x = null;
+                    var y = null;
+                    var type = null;
+                    var link = null;
+                    if (typeof event[i].DispatchParameter !== 'undefined') {
+                        type = 'OUTPUT';
+                    } else {
+                        x =
+                            (window.event.layerX - dx - canvasW) /
+                            this.__scene.scaleX -
+                            this.__scene.translateX +
+                            canvasW;
+                        y =
+                            (window.event.layerY -
+                                ((inputCount + controlCount - 1) / 2 - k) * dy -
+                                canvasH) /
+                            this.__scene.scaleY -
+                            this.__scene.translateY +
+                            canvasH;
+                        if (typeof event[i].ResponseParameter !== 'undefined') {
+                            type = 'INPUT';
+                        } else if (
+                            typeof event[i].ControlParameter !== 'undefined'
+                        ) {
+                            type = 'CONTROL';
+                        }
+                        k++;
+                    }
+                    var optional = event[i]._$.optional;
+                    optional = __isTrue(optional);
+                    nodeA = this.__addJTopoNode(
+                        x,
+                        y,
+                        event[i]._$.name,
+                        type,
+                        scale,
+                        optional
+                    );
+                    nodeA.__nodeType = type;
+                    nodeA.__MSID = __service._id;
+                    nodeA.__stateID = event[i].stateID;
+                    nodeA.__eventName = event[i]._$.name;
+                    nodeA.__optional = optional;
+                    nodeA.__serviceType = 'model';
+                    this.__bindNodeEvent(nodeA);
+                    container.add(nodeA);
+
+                    if (typeof event[i].DispatchParameter !== 'undefined') {
+                        link = this.__addJTopoLink(stateNode, nodeA);
+                        link.__linkType = 'OUT';
+                    } else {
+                        link = this.__addJTopoLink(nodeA, stateNode);
+                        link.__linkType = 'IN';
+                    }
+                }
+                JTopo.layout.layoutNode(this.__scene, stateNode, true);
+            }
+
+            // _id, host, port, DS, CDL, serviceType
+            let __addDataMapService = (service) => {
+                var self = this;
+
+                service.callType = 'src2udx';
+                this.__solution.solutionCfg.serviceList.push(service);
+                this.__task.MSState.push({
+                    state: MSState.unready,
+                    MSID: service._id,
+                    host: service.host,
+                    port: service.port,
+                    serviceType: service.serviceType
+                });
+
+                var scale = 1;
+                var linkScale = 1;
+                var canvasW = $('#canvas-div').width() / 2;
+                var canvasH = $('#canvas-div').height() / 2;
+
+                var container = this.__addJTopoContainer();
+                var stateNodeX =
+                    (window.event.layerX - canvasW) / this.__scene.scaleX -
+                    this.__scene.translateX +
+                    canvasW;
+                var stateNodeY =
+                    (window.event.layerY - canvasH) / this.__scene.scaleY -
+                    this.__scene.translateY +
+                    canvasH;
+                var serviceName = service.DS.name;
+                var stateNode = this.__addJTopoNode(
+                    stateNodeX,
+                    stateNodeY,
+                    serviceName,
+                    'STATES',
+                    scale
+                );
+                // 有可能会出现一个服务使用多次的情况，所以_id得在前台生成
+
+                stateNode.__MSID = service._id;
+                stateNode.__nodeType = 'STATES';
+                stateNode.__containerID = container._id;
+                stateNode.__serviceType = service.serviceType;
+                stateNode.__callType = 'src2udx';
+
+                this.__bindNodeEvent(stateNode);
+                container.add(stateNode);
+
+                var inputCount = 1;
+                var outputCount = 1;
+                var controlCount = 0;
+                var dx = __DATA_RADIUS * 4.5 * linkScale * this.__scene.scaleX;
+                var dy = __DATA_RADIUS * 2.5 * linkScale * this.__scene.scaleY;
+                var k = 0;
+
+                var state = service.CDL.StateGroup.States[0];
+                var event = state.Events;
+
+                for (var i = 0; i < event.length; i++) {
+                    var nodeA = null;
+                    var x = null;
+                    var y = null;
+                    var type = null;
+                    var link = null;
+                    if (event[i].type == 'out') {
+                        type = 'OUTPUT';
+                    } else {
+                        x =
+                            (window.event.layerX - dx - canvasW) /
+                            this.__scene.scaleX -
+                            this.__scene.translateX +
+                            canvasW;
+                        y =
+                            (window.event.layerY -
+                                ((inputCount + controlCount - 1) / 2 - k) * dy -
+                                canvasH) /
+                            this.__scene.scaleY -
+                            this.__scene.translateY +
+                            canvasH;
+                        type = 'INPUT';
+                    }
+                    var optional = event[i].optional;
+                    optional =
+                        optional == '0' || optional == 0 || optional == false ?
+                        false :
+                        true;
+                    nodeA = this.__addJTopoNode(
+                        x,
+                        y,
+                        event[i].name,
+                        type,
+                        scale,
+                        optional
+                    );
+                    nodeA.__nodeType = type;
+                    nodeA.__MSID = service._id;
+                    nodeA.__stateID = state.id;
+                    nodeA.__eventName = event[i].name;
+                    nodeA.__optional = optional;
+                    nodeA.__serviceType = service.serviceType;
+                    this.__bindNodeEvent(nodeA);
+                    container.add(nodeA);
+
+                    if (event[i].type == 'out') {
+                        link = this.__addJTopoLink(stateNode, nodeA);
+                        link.__linkType = 'OUT';
+                    } else {
+                        link = this.__addJTopoLink(nodeA, stateNode);
+                        link.__linkType = 'IN';
+                    }
+                }
+                JTopo.layout.layoutNode(this.__scene, stateNode, true);
+            }
+
+            let __addDataRefactorService = (service) => {
+                var self = this;
+
+                this.__solution.solutionCfg.serviceList.push(service);
+                this.__task.MSState.push({
+                    state: MSState.unready,
+                    MSID: service._id,
+                    host: service.host,
+                    port: service.port,
+                    serviceType: service.serviceType
+                });
+
+                var scale = 1;
+                var linkScale = 1;
+                var canvasW = $('#canvas-div').width() / 2;
+                var canvasH = $('#canvas-div').height() / 2;
+
+                var container = this.__addJTopoContainer();
+                var stateNodeX =
+                    (window.event.layerX - canvasW) / this.__scene.scaleX -
+                    this.__scene.translateX +
+                    canvasW;
+                var stateNodeY =
+                    (window.event.layerY - canvasH) / this.__scene.scaleY -
+                    this.__scene.translateY +
+                    canvasH;
+                var serviceName = service.DS.name;
+                var stateNode = this.__addJTopoNode(
+                    stateNodeX,
+                    stateNodeY,
+                    serviceName,
+                    'STATES',
+                    scale
+                );
+                // 有可能会出现一个服务使用多次的情况，所以_id得在前台生成
+
+                stateNode.__MSID = service._id;
+                stateNode.__nodeType = 'STATES';
+                stateNode.__containerID = container._id;
+                stateNode.__serviceType = service.serviceType;
+
+                this.__bindNodeEvent(stateNode);
+                container.add(stateNode);
+
+                var inputCount = 1;
+                var outputCount = 1;
+                var controlCount = 0;
+                var dx = __DATA_RADIUS * 4.5 * linkScale * this.__scene.scaleX;
+                var dy = __DATA_RADIUS * 2.5 * linkScale * this.__scene.scaleY;
+                var k = 0;
+
+                var state = service.CDL.StateGroup.States[0];
+                var event = state.Events;
+
+                for (var i = 0; i < event.length; i++) {
+                    var nodeA = null;
+                    var x = null;
+                    var y = null;
+                    var type = null;
+                    var link = null;
+                    if (event[i].type == 'out') {
+                        type = 'OUTPUT';
+                    } else {
+                        x =
+                            (window.event.layerX - dx - canvasW) /
+                            this.__scene.scaleX -
+                            this.__scene.translateX +
+                            canvasW;
+                        y =
+                            (window.event.layerY -
+                                ((inputCount + controlCount - 1) / 2 - k) * dy -
+                                canvasH) /
+                            this.__scene.scaleY -
+                            this.__scene.translateY +
+                            canvasH;
+                        type = 'INPUT';
+                    }
+                    var optional = event[i].optional;
+                    optional =
+                        optional == '0' || optional == 0 || optional == false ?
+                        false :
+                        true;
+                    nodeA = this.__addJTopoNode(
+                        x,
+                        y,
+                        event[i].name,
+                        type,
+                        scale,
+                        optional
+                    );
+                    nodeA.__nodeType = type;
+                    nodeA.__MSID = service._id;
+                    nodeA.__stateID = state.id;
+                    nodeA.__eventName = event[i].name;
+                    nodeA.__optional = optional;
+                    nodeA.__serviceType = service.serviceType;
+                    this.__bindNodeEvent(nodeA);
+                    container.add(nodeA);
+
+                    if (event[i].type == 'out') {
+                        link = this.__addJTopoLink(stateNode, nodeA);
+                        link.__linkType = 'OUT';
+                    } else {
+                        link = this.__addJTopoLink(nodeA, stateNode);
+                        link.__linkType = 'IN';
+                    }
+                }
+                JTopo.layout.layoutNode(this.__scene, stateNode, true);
+            }
+
             this.__hasChanged = true;
-            service = this.__convert2SADLService(service);
+            service = __convert2SADLService(service);
             if (service.serviceType == 'model') {
-                this.__addModelService(service);
+                __addModelService(service);
             } else if (service.serviceType == 'data map') {
-                this.__addDataMapService(service);
+                __addDataMapService(service);
             } else if (service.serviceType == 'data refactor') {
-                this.__addDataRefactorService(service);
+                __addDataRefactorService(service);
             }
         },
 
@@ -3814,7 +3779,7 @@ var CanvasJS = (() => {
             }
         },
 
-        // TODO 当上传数据时调用，验证上传数据与schema 是否匹配，先不做
+        // TODO 当上传数据时调用，验证上传数据与 schema 是否匹配，先不做
         validateEvent: function () {},
 
         // 当在不同模型之间建立连接时，验证link 是否合法
@@ -3844,7 +3809,7 @@ var CanvasJS = (() => {
             return true;
         },
 
-        // region socket
+        // region web-socket
         // 其他信息也都复制到node里了
         __updateNodeState: function (node) {
             if (node.__nodeType == 'STATES') {

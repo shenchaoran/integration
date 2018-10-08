@@ -1,18 +1,10 @@
 let RequestCtrl = require('./request.controller');
 let DataCtrl = require('./data.controller');
-let solutionDB = require('../models/solution.model');
 let taskDB = require('../models/task.model');
-let setting = require('../config/setting');
-let uuid = require('node-uuid');
 let WebSocketCtrl = require('./web-socket.controller');
-let TaskInstanceManager = require('../models/task-instance.model');
-let postal = require('postal');
 let ServiceCtrl = require('./service.controller');
 
-let Path = require('path');
-let fs = require('fs');
 let ObjectID = require('mongodb').ObjectID;
-let qs = require('querystring');
 let _ = require('lodash');
 let Promise = require('bluebird');
 
@@ -21,7 +13,7 @@ let Promise = require('bluebird');
 // MSState = UNREADY PENDING PAUSE RUNNING COLLAPSED SUCCEED
 
 module.exports = function DataDriver(task) {
-    this.channel = postal.channel(task._id);
+    // this.channel = postal.channel(task._id);
     this.task = task;
 
     _emit = (event, msg) => {
@@ -100,7 +92,7 @@ module.exports = function DataDriver(task) {
                             let service = _.find(this.task.solution.solutionCfg.serviceList, item => item._id === stub.MSID);
                             let rst = _isServiceReady(service);
                             if (rst.ready) {
-                                invokeService(service.host, service.port, rst.form, service.serviceType);
+                                invokeService(service.host, service.port, rst.invokeFormData, service.serviceType);
                             }
                         })
                         .catch(e => {
@@ -123,31 +115,31 @@ module.exports = function DataDriver(task) {
             if (item) {
                 let rst = _isServiceReady(service);
                 if (rst.ready) {
-                    invokeService(service.host, service.port, rst.form, service.serviceType);
+                    invokeService(service.host, service.port, rst.invokeFormData, service.serviceType);
                 }
             }
         });
     };
 
-    invokeService = (host, port, form, serviceType) => {
+    invokeService = (host, port, invokeFormData, serviceType) => {
         let url;
-        let msState = _.find(this.task.MSState, state => state.MSID === form.insID);
+        let msState = _.find(this.task.MSState, state => state.MSID === invokeFormData.insID);
         msState.state = 'PENDING';
         _updateInstance()
             .then(rst => {
                 _emit('service starting', {
                     error: null,
-                    MSinsID: form.insID
+                    MSinsID: invokeFormData.insID
                 });
                 if (serviceType === 'model') {
-                    url = `http://${host}:${port}/modelser/${form.id}`;
+                    url = `http://${host}:${port}/modelser/${invokeFormData.id}`;
                 } else if (serviceType === 'data map') {
                     url = `http://${host}:${port}/datamap/use/call`;
                 } else if (serviceType === 'data refactor') {
                     url = `http://${host}:${port}/refactor/call`;
                 }
-                console.log(url, form);
-                return RequestCtrl.get(url, form, false, true)
+                console.log(url, invokeFormData);
+                return RequestCtrl.get(url, invokeFormData, false, true)
             })
             .then(res => {
                 let msr_id;
@@ -163,7 +155,7 @@ module.exports = function DataDriver(task) {
                 else {
                     msr_id = res;
                 }
-                scanProgress(host, port, serviceType, msr_id, form.insID, form.callType);
+                scanProgress(host, port, serviceType, msr_id, invokeFormData.insID, invokeFormData.callType);
             })
             .catch(e => {
                 // TODO retry
@@ -173,7 +165,7 @@ module.exports = function DataDriver(task) {
                     .then(rst => {
                         _emit('service stoped', {
                             error: null,
-                            MSinsID: form.insID,
+                            MSinsID: invokeFormData.insID,
                             MSState: 'COLLAPSED',
                             newDataList: []
                         });
@@ -183,14 +175,14 @@ module.exports = function DataDriver(task) {
 
     scanProgress = (host, port, serviceType, cfg, MSinsID, callType) => {
         let url;
-        let form;
+        let invokeFormData;
         // 0: unfinished;   1: run succeed;     -1: run failed
-        let end;
+        let getEndState;
         let output = [];
         if (serviceType === 'model') {
             url = `http://${host}:${port}/modelserrun/json/${cfg}`;
-            form = undefined;
-            end = (res) => {
+            invokeFormData = undefined;
+            getEndState = (res) => {
                 res = JSON.parse(res);
                 if (res.result == 'err') {
                     console.log(res.message);
@@ -208,19 +200,19 @@ module.exports = function DataDriver(task) {
         } else {
             if (serviceType === 'data map') {
                 url = `http://${host}:${port}/common/records`;
-                form = {
+                invokeFormData = {
                     type: 'datamap',
                     guid: cfg
                 };
             }
             else if (serviceType === 'data refactor') {
                 url = `http://${host}:${port}/common/records`;
-                form = {
+                invokeFormData = {
                     type: 'refactor',
                     guid: cfg
                 };
             }
-            end = (res) => {
+            getEndState = (res) => {
                 if (res === '[]' || res === '') {
                     return 0;
                 } else {
@@ -241,9 +233,9 @@ module.exports = function DataDriver(task) {
         }
 
         let polling = () => {
-            RequestCtrl.get(url, form, false, true)
+            RequestCtrl.get(url, invokeFormData, false, true)
                 .then(res => {
-                    let endState = end(res);
+                    let endState = getEndState(res);
                     if (endState === 0) {
                         setTimeout(polling, 5000);
                     } else {
@@ -289,7 +281,7 @@ module.exports = function DataDriver(task) {
     // 检查模型运行数据是否准备完成
     _isServiceReady = (service) => {
         let ready = false;
-        let form;
+        let invokeFormData;
         var url;
         if (service.serviceType === 'model') {
             let inputs = [];
@@ -344,7 +336,7 @@ module.exports = function DataDriver(task) {
                     });
                 }
             });
-            form = {
+            invokeFormData = {
                 ac: 'run',
                 inputdata: JSON.stringify(inputs),
                 outputdata: JSON.stringify(outputs),
@@ -365,7 +357,7 @@ module.exports = function DataDriver(task) {
                         .value();
                     if (stub && stub.state === 'RECEIVED') {
                         ready = true;
-                        form = {
+                        invokeFormData = {
                             id: service.DS._id,
                             insID: service._id,
                             in_oid: stub.id,
@@ -413,7 +405,7 @@ module.exports = function DataDriver(task) {
                 }
             });
 
-            form = {
+            invokeFormData = {
                 id: service.DS._id,
                 insID: service._id,
                 method: service.DS.method,
@@ -423,7 +415,7 @@ module.exports = function DataDriver(task) {
 
         return {
             ready: ready,
-            form: form
+            invokeFormData: invokeFormData
         };
     };
 

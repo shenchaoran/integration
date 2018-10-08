@@ -6,7 +6,6 @@ let unzip = require('unzip');
 let setting = require('../config/setting');
 let geoDataDB = require('../models/data.model');
 let RequestCtrl = require('./request.controller');
-let WebSocketCtrl = require('./web-socket.controller');
 let _ = require('lodash');
 
 module.exports = {
