@@ -1,0 +1,17 @@
+a {
+    color: #00B7FF;
+}
+.preview img
+{
+    width: 99px;
+}
+.progress-bar{
+    padding-right: 0 !important;
+}
+.btn-unzip{
+    background: #4da2e2;
+    color: #ededed;
+}
+#top_tabby ul li{
+    width:150px !important;
+}

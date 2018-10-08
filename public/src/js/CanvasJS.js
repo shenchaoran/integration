@@ -34,7 +34,10 @@ var CanvasJS = (() => {
         collapsed: '#e0412b',
         succeed: '#41EB4A'
     };
+<<<<<<< HEAD
     
+=======
+>>>>>>> 600a93a41288b63d1f039317a613dae209f7b7e9
 
     // 包括角色和状态
     const EventColor = {

@@ -21,8 +21,13 @@
         "express-session": "^1.15.6",
         "express-validator": "^5.1.2",
         "formidable": "^1.2.1",
+<<<<<<< HEAD
         "grunt": "^1.0.3",
         "gulp-cli": "^2.0.1",
+=======
+        "grunt": "^1.0.2",
+        "gulp": "^3.9.1",
+>>>>>>> 600a93a41288b63d1f039317a613dae209f7b7e9
         "gulp-sourcemaps": "^2.6.4",
         "gulp-uglifyes": "^0.2.1",
         "http-errors": "~1.6.2",
@@ -62,11 +67,18 @@
         "grunt-contrib-copy": "^1.0.0",
         "grunt-contrib-csslint": "^2.0.0",
         "grunt-contrib-jshint": "^1.1.0",
+<<<<<<< HEAD
         "grunt-contrib-less": "^2.0.0",
         "grunt-contrib-sass": "^1.0.0",
         "grunt-contrib-uglify": "^3.3.0",
         "grunt-contrib-watch": "^1.1.0",
         "gulp": "^3.9.1",
+=======
+        "grunt-contrib-less": "^1.4.1",
+        "grunt-contrib-sass": "^1.0.0",
+        "grunt-contrib-uglify": "^3.3.0",
+        "grunt-contrib-watch": "^1.0.0",
+>>>>>>> 600a93a41288b63d1f039317a613dae209f7b7e9
         "gulp-autoprefixer": "^6.0.0",
         "gulp-browatchify": "0.0.0",
         "gulp-cache": "^1.0.2",

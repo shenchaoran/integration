@@ -5,5 +5,10 @@ visualization_service
 测试
 /public/js/browserBundle.js
 visualization_service.rar
+<<<<<<< HEAD
 public/dist
 .vscode
+=======
+public/dist/css/custom
+public/dist/js/custom
+>>>>>>> 600a93a41288b63d1f039317a613dae209f7b7e9

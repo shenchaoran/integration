@@ -1,0 +1,47 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch test-download-binary",
+            "program": "${workspaceFolder}/test/binary-download.test.js"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Chrome",
+            "url": "http://localhost:9990",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "chrome",
+            "request": "attach",
+            "name": "Attach to Chrome",
+            "port": 9222,
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch test",
+            "program": "${workspaceFolder}/controllers/test.js"
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach",
+            "port": 24688,
+            "restart": true
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Lanch",
+            "program": "${workspaceFolder}\\app.js"
+        }
+    ]
+}

@@ -30,7 +30,11 @@ var cssSrc = 'public/src/css/*.scss',
 
 gulp.task('css', () => {
     sass(cssSrc, {
+<<<<<<< HEAD
             // sourcemap: true,
+=======
+            sourcemap: true,
+>>>>>>> 600a93a41288b63d1f039317a613dae209f7b7e9
             stopOnError: true,
             precision: 6
         })
@@ -41,10 +45,17 @@ gulp.task('css', () => {
             cascade: true,
             remove: true
         }))
+<<<<<<< HEAD
         // .pipe(sourcemaps.write('maps', {
         //     includeContent: false,
         //     sourceRoot: cssDist
         // }))
+=======
+        .pipe(sourcemaps.write('maps', {
+            includeContent: false,
+            sourceRoot: cssDist
+        }))
+>>>>>>> 600a93a41288b63d1f039317a613dae209f7b7e9
         .pipe(minifycss())
         .pipe(gulp.dest(cssDist))
         .pipe(notify({
