@@ -134,7 +134,7 @@ input[type=checkbox] {
 }
 
 .sidebar form button {
-    margin-right: 15px;
+    margin-right: 85px;
     float: right;
 }
 
@@ -514,11 +514,11 @@ input[type=checkbox] {
 }
 
 canvas {
-    cursor: url("../../images/openhand.cur"), auto !important;
+    cursor: url("../../../images/openhand.cur"), auto !important;
 }
 
 canvas:active {
-    cursor: url('../../images/closedhand.cur'), auto !important;
+    cursor: url('../../../images/closedhand.cur'), auto !important;
 }
 
 .sidebar .form-group {

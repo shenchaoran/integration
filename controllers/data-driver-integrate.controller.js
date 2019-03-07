@@ -72,6 +72,7 @@ module.exports = function DataDriver(task) {
                             stub.id = res.id;
                             stub.pid = res.pid;
                             stub.fname = res.fname;
+                            console.log(res.fname);
                             stub.state = 'RECEIVED';
                             return _updateInstance()
                         })
@@ -223,6 +224,7 @@ module.exports = function DataDriver(task) {
                         _.map(output, output => {
                             output.Event = callType === 'udx2src'? 'Source': 'UDX'
                         });
+                        console.log('datamap output:\n', output)
                     }
                     else if(serviceType === 'data refactor') {
 
@@ -364,9 +366,11 @@ module.exports = function DataDriver(task) {
                             in_filename: stub.fname,
                             out_dir: stub.pid ? stub.pid : -1,
                             // TODO file MIME type 写死了
-                            out_filename: (new ObjectID().toHexString()) + '.xml',
+                            // out_filename: (new ObjectID().toHexString()) + '.xml',
+                            out_filename: (new ObjectID().toHexString()),
                             callType: service.callType
                         };
+
                     }
                 }
             });
@@ -412,6 +416,8 @@ module.exports = function DataDriver(task) {
                 params: params
             };
         }
+
+        console.log('----------data map request body:\n', invokeFormData)
 
         return {
             ready: ready,

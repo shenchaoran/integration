@@ -34,10 +34,6 @@ var CanvasJS = (() => {
         collapsed: '#e0412b',
         succeed: '#41EB4A'
     };
-<<<<<<< HEAD
-    
-=======
->>>>>>> 600a93a41288b63d1f039317a613dae209f7b7e9
 
     // 包括角色和状态
     const EventColor = {
@@ -434,6 +430,7 @@ var CanvasJS = (() => {
         return maxZ;
     };
 
+    // 是否是to node
     var __is2Node = function (node, relationList) {
         for (let i = 0; i < relationList.length; i++) {
             var toNode = relationList[i].to;
@@ -448,7 +445,9 @@ var CanvasJS = (() => {
         return false;
     };
 
+    // 对text文本的操作
     var __wrapText = function () {
+        // 文本自动换行方法
         CanvasRenderingContext2D.prototype.wrapText = function (str, x, y) {
             var textArray = str.split('\n');
             if (textArray == undefined || textArray == null) return false;
@@ -2468,7 +2467,7 @@ var CanvasJS = (() => {
                             const DSC = JSON.parse(DSCstr);
                             // const host = '172.21.212.85';
                             // const port = '8899';
-                            const host = '106.14.78.235';
+                            const host = '172.21.212.85';
                             const port = '8899';
 
                             $(`#${id}-delete`).on('click', () => {
@@ -4149,6 +4148,28 @@ var CanvasJS = (() => {
                         time: 2000
                     });
                 }
+            });
+        },
+
+        /**
+         * by mzy, function for collaborative modeling
+         */
+        collaborateSocket:function(){
+            var self = this;
+            socket = io('/integrate/solution');
+
+            socket.on('connect', function (stage) {
+                console.log('socket connected to server');
+                // 按照taskID 给room命名，后台有状态更新时，更新所有该task对应的client
+                // socket.emit('dispatch room', self.__task._id);
+            });
+            
+            socket.on('disconnect', function () {
+                console.log('disconnected');
+            });
+
+            socket.on('error', function (msg) {
+                console.log(JSON.parse(msg));
             });
         }
         // endregion

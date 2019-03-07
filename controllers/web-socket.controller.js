@@ -7,9 +7,12 @@ let WebSocketCtrl = {
 
         io = io(server);
         let taskServer = io.of('/integrate/task');
+        /**add by mzy for collabrate */
+        let soluServer = io.of('/integrate/solution');
         app.websocket = {
             io: io,
-            taskServer: taskServer
+            taskServer: taskServer,
+            soluServer: soluServer  //add by mzy
         };
         taskServer.on('connection',function (socket) {
             console.log('------------------------------a new client connected------------------------------');
@@ -21,11 +24,30 @@ let WebSocketCtrl = {
             socket.on('message',function (msg) {
                 console.log(msg);
             });
-    
+            
             socket.on('disconnect',function () {
                 console.log('------------------------------a client disconnected------------------------------');
             });
         });
+
+        /**
+         * add by mzy for collabrate
+         */
+        soluServer.on('connection',function(socket){
+            console.log('------------------------------a new client connected------------------------------')
+
+            socket.on('dispatch room', function(solutionID){
+                socket.join(solutionID);
+            });
+
+            socket.on('collabrate', function(stage){
+                socket.broadcast.emit('collabrate', stage);
+            });
+
+            socket.on('disconnect', function(){
+                console.log('------------------------------a client disconnected------------------------------');
+            })
+        })
     },
 
     emit: (room, eventName, emitMsg, cb) => {
