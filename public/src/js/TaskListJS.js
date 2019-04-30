@@ -109,9 +109,7 @@ var TaskList = (function() {
                 header: 'Operate',
                 template: function(obj) {
                     return "<div>" +
-                        "<button class='btn btn-default btn-xs task-operation-btn task-detail-btn' title='task detail'><i class='fa fa-info'></i></button>" +
-                        "<button class='btn btn-default btn-xs task-operation-btn task-edit-btn' title='edit task'><i class='fa fa-pencil-square'></i></button>" +
-                        "<button class='btn btn-default btn-xs task-operation-btn task-delete-btn' title='delete task'><i class='fa fa-trash'></i></button>" +
+                        "<button class='btn btn-default btn-xs task-operation-btn task-detail-btn' title='task detail' style='margin-left: 15px'><i class='fa fa-info'></i></button>" +
                         "</div>";
                 },
                 adjust: true

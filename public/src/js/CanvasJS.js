@@ -2303,6 +2303,7 @@ var CanvasJS = (() => {
                                 <p style="margin-top: 10px"><b>Download data: </b>&nbsp;&nbsp;
                                     <button id="${id}-download-data" class="btn btn-default btn-xs down-event-btn">Download</button>
                                 </p>
+                                <p style="color:gray">NOTE: When the downloaded data is named "zip", please add the .zip suffix manually.</p>
                                 <p style="margin-top: 10px"><b>Data visualization: </b>&nbsp;&nbsp;
                                     <button id="${id}-visualization-data" class="btn btn-default btn-xs down-event-btn">Visualization</button>
                                 </p>

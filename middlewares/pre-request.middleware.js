@@ -46,7 +46,7 @@ module.exports = (app) => {
     app.use(favicon(path.join(__dirname, '..', 'public/images/favicon.png')));
 
     // 加载静态资源中间件，前后端分离就不要了
-    app.use(express.static(path.join(__dirname, '..', 'public')));
+    app.use('/integration', express.static(path.join(__dirname, '..', 'public')));
     app.use('/visualization', express.static(path.join(__dirname, '../visualization_service')));
 
     // all cross origin

@@ -22,7 +22,7 @@ module.exports = {
     })(),
     mongodb: {
         name: 'Integration',
-        host: '127.0.0.1',
+        host: '172.21.212.7',
         port: '27017'
     },
     geo_data: {
